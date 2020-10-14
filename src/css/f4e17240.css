@@ -127,8 +127,8 @@ html {
     position: absolute;
     height: 154px;
     width: 598px;
-    top: 96px;
-    left: -71px;
+    top: 58px;
+    left: -142px;
     align-items: center;
     vertical-align: middle;
     justify-content: center;
@@ -144,6 +144,12 @@ html {
     text-align: center;
     cursor: pointer;
     transition: 0.5s;
+}
+
+.projects > div > img {
+    position: absolute;
+    width: 54%;
+    left: 24%;
 }
 
 .projects > div:hover {
