@@ -1,0 +1,22 @@
+{
+    "Common": {
+        "Color1": "#B1B1B1",
+        "Color2": "#79858E"
+    },
+    "Uncommon": {
+        "Color1": "#5BFD00",
+        "Color2": "#1E8500"
+    },
+    "Rare": {
+        "Color1": "#00FFF6",
+        "Color2": "#006DFF"
+    },
+    "Epic": {
+        "Color1": "#D505FF",
+        "Color2": "#9D19FF"
+    },
+    "Legendary": {
+        "Color1": "#F68B20",
+        "Color2": "#FF4203"
+    }
+}

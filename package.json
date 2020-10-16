@@ -1,0 +1,33 @@
+{
+  "name": "blobry",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.mjs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/blobry/blobry.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/blobry/blobry/issues"
+  },
+  "scripts": {
+    "start": "node -r esm --experimental-json-modules index.mjs"
+  },
+  "type": "module",
+  "homepage": "https://github.com/blobry/blobry#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "canvas": "^2.6.1",
+    "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "esm": "^3.2.25",
+    "express": "^4.17.1",
+    "gifencoder": "^2.0.1",
+    "gifshot": "^0.4.5",
+    "node-fetch": "^2.6.1",
+    "uuid": "^8.3.1"
+  }
+}
