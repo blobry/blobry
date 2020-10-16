@@ -31,7 +31,7 @@ const rgbToHex = (r, g, b) => {
 
     const settings = {
         cosmetics: {
-            type: false,
+            type: true,
             widgets: true,
             images: true
         }
