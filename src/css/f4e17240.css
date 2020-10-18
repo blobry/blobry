@@ -15,7 +15,7 @@ html {
     background-color: #2C2F33;
     font-family: 'Helvetica', 'Arial', sans-serif;
     transition: 0.2s;
-    overflow: hidden;
+    overflow-x: hidden;
     user-select: none;
     color: #2C2F33;
 }
@@ -51,29 +51,51 @@ html {
     color: #ffffff;
 }
 
-.startup {
-    position: absolute;
-    text-align: center;
-    margin: 0;
-    position: absolute;
-    vertical-align: middle;
-    top: 60%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
-.startup > div:nth-of-type(1) {
+.section {
     position: relative;
-    top: 28%;
-    width: 100%;
-    font-size: 51px;
+    height: 657px;
+    top: -8px;
+    width: 103%;
+    left: -8px;
+    -webkit-box-align: center;
+    -webkit-box-pack: center;
+    display: -webkit-box;
 }
 
-.startup > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > svg {
-    width: 134px;
+.header > div:nth-of-type(1) {
+    width: 411px;
+}
+
+.header svg:hover {
+    border: 1px solid #7289DA;
+    border-collapse: separate;
+    border-spacing: 615px;
+}
+
+.header path:hover {
+    fill: #6175B7;
+}
+
+.header svg > path {
+    transition: 0.5s;
+}
+
+.header svg {
+    width: 350px;
+    position: relative;
     transform: scale(1);
     animation: move 5s ease-in-out infinite;
     transform-origin: 50% 50%;
+}
+
+.header > div:nth-of-type(1) > div:nth-of-type(1) {
+    color: #7289DA;
+    font-size: 28px;
+    position: absolute;
+    top: 83%;
+    left: -36px;
+    text-align: center;
+    width: 102%;
 }
 
 @keyframes move {
@@ -97,6 +119,13 @@ html {
     }
 }
 
+@keyframes startup {
+    100% {
+        transform: translate(-118%, -50%);
+        opacity: 1;
+    }
+}
+
 .startup > div:nth-of-type(1) > div:nth-of-type(1) {
     width: 100%;
     align-items: center;
@@ -107,14 +136,23 @@ html {
 
 .startup > div:nth-of-type(1) > div:nth-of-type(1) > div {
     border-radius: 80px;
-    overflow: hidden;
-    height: 150px;
-    width: 150px;
+    height: 100vh;
+    width: 430px;
     margin: 0;
     position: absolute;
     top: 50%;
-    left: 50%;
-    transform: translate(-50%, -95%);
+    animation: startup 500ms forwards;
+    transform: translate(-118%, -139%);
+}
+
+.startup > div:nth-of-type(1) > div:nth-of-type(1) > div > div {
+    position: absolute;
+    color: #7289DA;
+    font-weight: bold;
+    text-shadow: 0px 0px;
+    left: 68%;
+    white-space: pre;
+    top: 40%;
 }
 
 .startup > div:nth-of-type(1) > div:nth-of-type(1) > div > img {
@@ -124,11 +162,8 @@ html {
 
 .projects {
     display: flex;
-    position: absolute;
     height: 154px;
     width: 598px;
-    top: 58px;
-    left: -142px;
     align-items: center;
     vertical-align: middle;
     justify-content: center;
@@ -139,7 +174,6 @@ html {
     height: 136px;
     border: 1px solid;
     border-radius: 5px;
-    position: relative;
     margin: 11px;
     text-align: center;
     cursor: pointer;
@@ -147,9 +181,9 @@ html {
 }
 
 .projects > div > img {
-    position: absolute;
     width: 54%;
-    left: 24%;
+    position: relative;
+    top: 8%;
 }
 
 .projects > div:hover {
@@ -172,21 +206,6 @@ html {
 .projects > div > div:nth-of-type(2) {
     font-size: 23px;
     position: relative;
-}
-
-.startup > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > svg:hover {
-    fill: #728A6F;
-    border: 1px solid #728A6F;
-    border-collapse: separate;
-    border-spacing: 615px;
-}
-
-.startup > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > svg > path:hover {
-    fill: #728A6F;
-}
-
-.startup > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > svg > path {
-    transition: 0.5s;
 }
 
 .button {

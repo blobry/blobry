@@ -13,6 +13,26 @@
 
 class Blobry {
     constructor() {
+        this.todayName = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][new Date().getDay()];
+        this.randomMessages = [
+            "It's a bird!. It's a plane! It's Blobry..",
+            "Once apon a time, blob.",
+            "Chill, blob is here.",
+            "confusion what is blob and blobry",
+            `Doubled up blob on a ${this.todayName}.`,
+            `Already blob ${this.todayName}???`,
+            `Hey it's ${new Date().getHours()}, so, ${new Date().getHours()} blob row!`,
+            "finna blob up in here",
+            "teenari caodaar - haha yes",
+            "epic caodaar - haha yes"
+        ];
+        this.randomMessage = this.randomMessages[Math.floor(Math.random() * this.randomMessages.length)];
+        $('#rando').html(this.randomMessage);
+        if(this.randomMessage === `Hey it's ${new Date().getHours()}, so, ${new Date().getHours()} blob row!`) {
+            $('#blob').css('background-image', `url(favicon.ico)`);
+            $('#blob').css('background-repeat', 'repeat');
+            $('#blob').css('background-size', `${new Date().getHours() * 3 + 2}px`);
+        }
         this.color = Cookies.get('color') || this.pagecolor();
         this.setColor();
 
@@ -53,4 +73,6 @@ class Blobry {
 
 $(document).ready(async () => {
     globalThis.blobry = new Blobry();
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    $('#blob').css('animation', 'move 5s ease-in-out infinite');
 });
