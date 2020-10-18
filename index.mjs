@@ -184,6 +184,8 @@ const rgbToHex = (r, g, b) => {
                 return Buffer.from(canvas.toDataURL().split(",")[1], 'base64');
             }
             if(settings.cosmetics.images) app.get(`/images/cosmetics/br/${value.id}.png`, async (req, res) => {
+                let ms = 0;
+                let s = setInterval(() => ms + 1, 1);
                 const b = req.query.b === "true";
                 const size = req.query.size;
                 if(!Buffers.find(e => e.id === value.id && e.size === size && e.b === b)) Buffers.push({
@@ -199,6 +201,8 @@ const rgbToHex = (r, g, b) => {
                 });
 
                 res.end(image); 
+                clearInterval(s);
+                console.log(ms)
             });
 
             if(settings.cosmetics.widgets) app.get(`/widgets/cosmetics/br/${value.id}.widget`, async (req, res) => {
