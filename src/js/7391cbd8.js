@@ -25,7 +25,8 @@ class Blobry {
             "finna blob up in here",
             "teenari caodaar - haha yes",
             "epic caodaar - haha yes",
-            "azlee is not funny. - azlee - idc - teenari"
+            "azlee is not funny. - azlee - idc - teenari",
+            "rip professionalism 2020 to 2020"
         ];
         this.randomMessage = this.randomMessages[Math.floor(Math.random() * this.randomMessages.length)];
         $('#rando').html(this.randomMessage);
