@@ -28,7 +28,7 @@ class Blobry {
         ];
         this.randomMessage = this.randomMessages[Math.floor(Math.random() * this.randomMessages.length)];
         $('#rando').html(this.randomMessage);
-        if(this.randomMessage === `Hey it's ${new Date().getHours()}, so, ${new Date().getHours()} blob row!`) {
+        if(Cookies.get('cutscene') && this.randomMessage === `Hey it's ${new Date().getHours()}, so, ${new Date().getHours()} blob row!`) {
             $('#blob').css('background-image', `url(favicon.ico)`);
             $('#blob').css('background-repeat', 'repeat');
             $('#blob').css('background-size', `${new Date().getHours() * 3 + 2}px`);
@@ -73,6 +73,32 @@ class Blobry {
 
 $(document).ready(async () => {
     globalThis.blobry = new Blobry();
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    $('#blob').css('animation', 'move 5s ease-in-out infinite');
+    if(!Cookies.get('cutscene')) {
+        $('svg').eq(0).animate({left: '107'}, 500);
+        await new Promise(resolve => setTimeout(resolve, 500));
+        $('svg').eq(2).animate({left: '-108px'}, 500);
+        await new Promise(resolve => setTimeout(resolve, 500));
+        $('svg').eq(0).remove();
+        $('svg').eq(2).remove();
+        $('svg').eq(0).animate({width: '350px'}, 500);
+        $('svg').eq(1).remove();
+        $('[style="position: relative;left: -4vh;"]').animate({left: '-30px'}, 500);
+        $('html').css('overflow', '');
+        await new Promise(resolve => setTimeout(resolve, 500));
+        $('.section').eq(1).css('display', '');
+        $('#rando').css('display', '').animate({top: '83%'}, 500);
+        Cookies.set('cutscene', true);
+    }
+    else {
+        $('svg').eq(0).remove();
+        $('svg').eq(2).remove();
+        $('svg').eq(1).remove();
+        $('[style="position: relative;left: -4vh;"]').animate({left: '-30px'}, 500);
+        $('html').css('overflow', '');
+        $('.section').eq(1).css('display', '');
+        $('#rando').css('display', '').animate({top: '83%'}, 500);
+        $('svg').css('width', '350px');
+    }
+    // await new Promise((resolve) => setTimeout(resolve, 500));
+    // $('#blob').css('animation', 'move 5s ease-in-out infinite');
 });

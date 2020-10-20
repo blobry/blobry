@@ -20,6 +20,10 @@ html {
     color: #2C2F33;
 }
 
+body {
+    height: 100vh;
+}
+
 .white {
     background-color: #ffffff;
 }
@@ -53,7 +57,7 @@ html {
 
 .section {
     position: relative;
-    height: 657px;
+    height: 100vh;
     top: -8px;
     width: 103%;
     left: -8px;
@@ -64,12 +68,14 @@ html {
 
 .header > div:nth-of-type(1) {
     width: 411px;
+    text-align: center;
 }
 
 .header svg:hover {
     border: 1px solid #7289DA;
     border-collapse: separate;
     border-spacing: 615px;
+    box-shadow: 0px 0px 4331px #7289DA;
 }
 
 .header path:hover {
@@ -81,8 +87,9 @@ html {
 }
 
 .header svg {
-    width: 350px;
+    width: 106px;
     position: relative;
+    transition: 0.2s;
     transform: scale(1);
     animation: move 5s ease-in-out infinite;
     transform-origin: 50% 50%;
