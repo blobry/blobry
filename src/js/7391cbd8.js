@@ -73,6 +73,10 @@ class Blobry {
 
 $(document).ready(async () => {
     globalThis.blobry = new Blobry();
+    $('#redo').click(() => {
+        Cookies.remove('cutscene');
+        location = location;
+    });
     if(!Cookies.get('cutscene')) {
         $('svg').eq(0).animate({left: '107'}, 500);
         await new Promise(resolve => setTimeout(resolve, 500));
@@ -91,6 +95,7 @@ $(document).ready(async () => {
     }
     else {
         $('svg').eq(0).remove();
+        $('')
         $('svg').eq(2).remove();
         $('svg').eq(1).remove();
         $('[style="position: relative;left: -4vh;"]').animate({left: '-30px'}, 500);
