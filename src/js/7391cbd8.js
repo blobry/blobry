@@ -24,7 +24,8 @@ class Blobry {
             `Hey it's ${new Date().getHours()}, so, ${new Date().getHours()} blob row!`,
             "finna blob up in here",
             "teenari caodaar - haha yes",
-            "epic caodaar - haha yes"
+            "epic caodaar - haha yes",
+            "azlee is not funny. - azlee - idc - teenari"
         ];
         this.randomMessage = this.randomMessages[Math.floor(Math.random() * this.randomMessages.length)];
         $('#rando').html(this.randomMessage);
