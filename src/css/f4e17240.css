@@ -243,3 +243,18 @@ body {
     left: -870%;
     top: 151%;
 }
+
+::-webkit-scrollbar {
+    color: white;
+    width: 5px;
+}
+  
+::-webkit-scrollbar-track {
+    opacity: 0;
+}
+  
+::-webkit-scrollbar-thumb {
+    background: #333D60;
+    border-radius: 1px;
+    opacity: 1;
+}
