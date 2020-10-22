@@ -9,7 +9,7 @@ import denv from 'dotenv';
 import fs from 'fs';
 
 const { loadImage, registerFont, Canvas } = canvas;
-const { port, client_id, client_secret, url } = process.env.PORT ? process.env : denv.config().parsed;
+const { client_id, client_secret, url } = process.env.PORT ? process.env : denv.config().parsed;
 
 const Buffers = [];
 const app = express();
@@ -111,7 +111,7 @@ const rgbToHex = (r, g, b) => {
         res.redirect('https://pages.blobry.com/dashboard');
     });
 
-    app.listen(port || 100, () => console.log(`[Interact] Listening to http://localhost:${port || 100}/`));
+    app.listen(process.env.PORT || 100, () => console.log(`[Interact] Listening to http://localhost:${process.env.PORT || 100}/`));
 
     if(settings.cosmetics.type) for (const backendRaw of [...new Set(apidata.data.map(e => e.series ? e.series.backendValue : null))].filter(e => e)) {
         const invalidSeries = [{
