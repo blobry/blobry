@@ -113,6 +113,12 @@ const rgbToHex = (r, g, b) => {
         });
     });
 
+    res.get('/asd/asd', (req, res) => {
+        res.send({
+            redirect: 'https://pages.blobry.com'
+        });
+    })
+
     app.listen(process.env.PORT || 100, () => console.log(`[Interact] Listening to http://localhost:${process.env.PORT || 100}/`));
 
     if(settings.cosmetics.type) for (const backendRaw of [...new Set(apidata.data.map(e => e.series ? e.series.backendValue : null))].filter(e => e)) {
