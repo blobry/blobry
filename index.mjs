@@ -113,7 +113,7 @@ const rgbToHex = (r, g, b) => {
         });
     });
 
-    res.get('/asd/asd', (req, res) => {
+    app.get('/asd/asd', (req, res) => {
         res.send({
             redirect: 'https://pages.blobry.com'
         });
