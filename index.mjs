@@ -108,7 +108,9 @@ const rgbToHex = (r, g, b) => {
         const code = req.query.code;
         const access_token = (await (await fetch(`${url}?${client_id}&${client_secret}&code=${code}`)).text()).split('&')[0].split('=')[1];
         if(access_token.length !== 40) return res.send(access_token);
-        res.redirect('https://pages.blobry.com/dashboard');
+        res.send({
+            redirect: 'https://pages.blobry.com'
+        });
     });
 
     app.listen(process.env.PORT || 100, () => console.log(`[Interact] Listening to http://localhost:${process.env.PORT || 100}/`));
