@@ -5,9 +5,11 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import cookieparser from 'cookie-parser';
 import rarities from './src/json/rarities.json';
+import denv from 'dotenv';
 import fs from 'fs';
 
 const { loadImage, registerFont, Canvas } = canvas;
+const { port, client_id, client_secret, url } = process.env.PORT ? process.env : denv.config().parsed;
 
 const Buffers = [];
 const app = express();
@@ -22,6 +24,25 @@ app.use(cookieparser());
 app.use(cors());
 app.use(bodyParser.json());
 
+class User {
+    constructor(access_token) {
+        this.token = access_token;
+    }
+
+    async repos() {
+        return (await (await this.request('http://api.github.com/user/repos')).json()).filter(r => r.permissions.admin === true);
+    }
+
+    async request(url, token=this.token, method="GET") {
+        return await fetch(url, {
+            headers: {
+                Authorization: `bearer ${token}`
+            },
+            method
+        });
+    }
+}
+
 const rgbToHex = (r, g, b) => {
     return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
 }
@@ -31,7 +52,7 @@ const rgbToHex = (r, g, b) => {
 
     const settings = {
         cosmetics: {
-            type: true,
+            type: false,
             widgets: true,
             images: true
         }
@@ -83,7 +104,14 @@ const rgbToHex = (r, g, b) => {
         </html>`);
     });
 
-    app.listen(process.env.PORT || 100, () => console.log(`[Interact] Listening to http://localhost:${process.env.PORT || 100}/`));
+    app.get('/pages/auth', async (req, res) => {
+        const code = req.query.code;
+        const access_token = (await (await fetch(`${url}?${client_id}&${client_secret}&code=${code}`)).text()).split('&')[0].split('=')[1];
+        if(access_token.length !== 40) return res.send(access_token);
+        res.redirect('https://pages.blobry.com/dashboard');
+    });
+
+    app.listen(port || 100, () => console.log(`[Interact] Listening to http://localhost:${port || 100}/`));
 
     if(settings.cosmetics.type) for (const backendRaw of [...new Set(apidata.data.map(e => e.series ? e.series.backendValue : null))].filter(e => e)) {
         const invalidSeries = [{
