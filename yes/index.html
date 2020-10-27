@@ -1,0 +1,395 @@
+<!-- ---
+permalink: /404.html
+--- -->
+
+<!-- /** -->
+ <!-- * Copyright 2020 Teenari -->
+ <!-- * Licensed under the Apache License, Version 2.0 (the "License"); -->
+ <!-- * you may not use this file except in compliance with the License. -->
+ <!-- * You may obtain a copy of the License at -->
+ <!-- * http://www.apache.org/licenses/LICENSE-2.0 -->
+ <!-- * Unless required by applicable law or agreed to in writing, software -->
+ <!-- * distributed under the License is distributed on an "AS IS" BASIS, -->
+ <!-- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. -->
+ <!-- * See the License for the specific language governing permissions and -->
+ <!-- * limitations under the License. -->
+ <!-- */ -->
+ 
+ <!DOCTYPE html>
+ <html style="overflow: hidden;">
+     <head>
+        <title>Blobry</title>
+        <style>
+html {
+    background-color: #2c2f33;
+    font-family: Helvetica, Arial, sans-serif;
+    transition: .2s;
+    overflow-x: hidden;
+    user-select: none;
+    color: #2c2f33
+}
+
+body {
+    height: 100vh
+}
+
+.white {
+    background-color: #fff
+}
+
+.colorchange {
+    margin: 50px;
+    top: -40px;
+    position: fixed;
+    right: -36px;
+    text-align: right;
+    z-index: 1
+}
+
+.colorchange>div {
+    transition: .2s;
+    padding: 10px;
+    display: inline-block;
+    color:$ {
+        color.background
+    }
+    ;
+    background:$ {
+        color.text
+    }
+    ;
+    position:relative;
+    user-select:none;
+    border-radius:5px;
+    cursor:pointer;
+    box-shadow:0 0 5px $ {
+        color.background
+    }
+}
+
+.colorchange>div:hover {
+    background:$ {
+        color.background
+    }
+    ;
+    color:$ {
+        color.text
+    }
+}
+
+.section {
+    position: relative;
+    height: 100vh;
+    top: -8px;
+    width: 103%;
+    left: -8px;
+    -webkit-box-align: center;
+    -webkit-box-pack: center;
+    display: -webkit-box
+}
+
+.header>div:nth-of-type(1) {
+    width: 411px;
+    text-align: center
+}
+
+.header svg:hover {
+    border: 1px solid #7289da;
+    border-collapse: separate;
+    border-spacing: 615px;
+    box-shadow: 0 0 4331px #7289da
+}
+
+.header path:hover {
+    fill: #6175b7
+}
+
+.header svg>path {
+    transition: .5s
+}
+
+.header svg {
+    width: 106px;
+    position: relative;
+    transition: .2s;
+    transform: scale(1);
+    animation: move 5s ease-in-out infinite;
+    transform-origin: 50% 50%
+}
+
+.header>div:nth-of-type(1)>div:nth-of-type(1) {
+    color: #7289da;
+    font-size: 28px;
+    position: absolute;
+    top: 83%;
+    left: -36px;
+    text-align: center;
+    width: 102%
+}
+
+@keyframes move {
+    0% {
+        transform: scale(1)
+    }
+    38% {
+        transform: scale(.8, 1)
+    }
+    40% {
+        transform: scale(.8, 1)
+    }
+    78% {
+        transform: scale(1.3)
+    }
+    80% {
+        transform: scale(1.3)
+    }
+    100% {
+        transform: scale(1) translate(0, 1px)
+    }
+}
+
+.startup>div:nth-of-type(1)>div:nth-of-type(1) {
+    width: 100%;
+    align-items: center;
+    display: flex;
+    vertical-align: middle;
+    position: relative
+}
+
+.startup>div:nth-of-type(1)>div:nth-of-type(1)>div {
+    border-radius: 80px;
+    height: 100vh;
+    width: 430px;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    transform: translate(-118%, -50%);
+    opacity: 1;
+}
+
+.startup>div:nth-of-type(1)>div:nth-of-type(1)>div>div {
+    position: absolute;
+    color: #7289da;
+    font-weight: 700;
+    text-shadow: 0 0;
+    left: 68%;
+    white-space: pre;
+    top: 40%
+}
+
+.startup>div:nth-of-type(1)>div:nth-of-type(1)>div>img {
+    width: 150px;
+    position: relative
+}
+
+.projects {
+    display: flex;
+    height: 154px;
+    width: 598px;
+    align-items: center;
+    vertical-align: middle;
+    justify-content: center
+}
+
+.projects>div {
+    width: 210px;
+    height: 136px;
+    border: 1px solid;
+    border-radius: 5px;
+    margin: 11px;
+    text-align: center;
+    cursor: pointer;
+    transition: .5s
+}
+
+.projects>div>img {
+    width: 54%;
+    position: relative;
+    top: 8%
+}
+
+.projects>div:hover {
+    box-shadow: 0 0 79px #2c2f33
+}
+
+.projects>div>div:nth-of-type(1) {
+    overflow: hidden;
+    border-bottom: 1px solid;
+    position: relative;
+    height: 78px
+}
+
+.projects>div>div:nth-of-type(1)>img {
+    width: 174px;
+    position: relative;
+    top: -42px
+}
+
+.projects>div>div:nth-of-type(2) {
+    font-size: 23px;
+    position: relative
+}
+
+.button {
+    transition: .2s;
+    padding: 10px;
+    display: inline-block;
+    color: #7289da;
+    background: #fff;
+    position: relative;
+    user-select: none;
+    border-radius: 5px;
+    cursor: pointer
+}
+
+.button:hover {
+    background: #7289da;
+    color: #fff
+}
+
+.blob {
+    width: 1821%;
+    transform: scale(1);
+    animation: move 5s ease-in-out infinite;
+    transform-origin: 50% 50%;
+    opacity: .5;
+    z-index: -1;
+    position: absolute;
+    left: -870%;
+    top: 151%
+}
+
+::-webkit-scrollbar {
+    color: #fff;
+    width: 5px
+}
+
+::-webkit-scrollbar-track {
+    opacity: 0
+}
+
+::-webkit-scrollbar-thumb {
+    background: #333d60;
+    border-radius: 1px;
+    opacity: 1
+}
+
+.startup>div:nth-of-type(1)>div:nth-of-type(1)>div {
+    border-radius: 80px;
+    margin: 0;
+    position: absolute;
+    top: -61%;
+    left: 81%;
+    width: fit-content;
+    height: 210px;
+    transform: translate(-49%, -52%)
+}
+
+.startup>div:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(1)>svg {
+    width: 854px;
+    transform: scale(1);
+    animation: move 5s ease-in-out infinite;
+    transform-origin: 50% 50%;
+    height: 854px
+}
+
+.startup {
+    position: absolute;
+    text-align: center;
+    margin: 0;
+    position: absolute;
+    vertical-align: middle;
+    top: 89%;
+    left: 50%;
+    transform: translate(-50%, -50%)
+}
+
+.startup>div:nth-of-type(1) {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    font-size: 51px
+}
+
+.startup>div:nth-of-type(1)>div:nth-of-type(1) {
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    display: flex;
+    vertical-align: middle;
+    position: relative
+}
+
+.startup>div:nth-of-type(1)>div:nth-of-type(1)>div>div {
+    text-align: center;
+    position: absolute;
+    color: #7289da;
+    font-weight: 700;
+    text-shadow: 0 0;
+    display: block;
+    width: 100%;
+    font-size: 59px;
+    white-space: pre;
+    top: -101%
+}
+
+.startup>div:nth-of-type(1)>div:nth-of-type(1)>div>div>div:nth-of-type(1) {
+    font-size: 31px;
+    text-align: center;
+    position: absolute;
+    width: 100%
+}
+
+.startup>div:nth-of-type(1)>div:nth-of-type(1)>div>div>div:nth-of-type(2) {
+    font-size: 21px;
+    text-align: center;
+    position: absolute;
+    width: 100%;
+    top: 102px
+}
+        </style>
+        <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30=" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/swaydeng/imgcolr@1.0.1/imgcolr.html5.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/jquery.shadow-animation/1/mainfile"></script>
+        <script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+        <script type="text/javascript">class Blobry{constructor(){this.todayName=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][(new Date).getDay()],this.randomMessages=["404? that's sad.","Once apon a time, blob's didn't exist..","Do not chill, blob isn't here."],this.randomMessage=this.randomMessages[Math.floor(Math.random()*this.randomMessages.length)],$("#rando").html(this.randomMessage),this.color=Cookies.get("color")||this.pagecolor(),this.setColor(),$("#color").click(()=>this.setColor("white"===this.color?"gray":"white"))}setColor(e=this.color){switch(this.color=e,Cookies.set("color",e),e){case"white":document.getElementsByTagName("html")[0].classList.add("white"),$("html").css("color",""),$(".colorchange").children()[0].innerText="GRAY";break;case"gray":document.getElementsByTagName("html")[0].classList.remove("white"),$(".colorchange").children()[0].innerText="WHITE",$("html").css("color","white");break;default:return console.log(`Unknown color: ${e}`),this.setColor("white")}return this}pagecolor(){const e=(new Date).getHours();return e>=6&&e<20?"white":"black"}}$(document).ready(async()=>{globalThis.blobry=new Blobry});</script>
+        <link rel="icon" href="https://blobry.com/favicon.ico" type="image/ico"/>
+        <link rel="shortcut icon" href="https://blobry.com/favicon.ico" type="image/x-icon"/>
+        <meta name="keywords" content="teenari,blobry,teenari,blobry.com">
+        <meta name="theme-color" content="#7289DA">
+        <meta name="description" content="404, not found?">
+        <meta content="Blobry" property="og:site_name">
+        <meta property="og:url" content="https://blobry.com/404">
+        <meta property="og:type" content="website">
+        <meta property="og:image" itemprop="image" content="https://webfort.herokuapp.com/static/blob.png">
+        <meta property="og:title" content="404">
+        <meta property="og:description" content="404, not found?">
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:title" content="404">
+        <meta name="twitter:image" content="https://webfort.herokuapp.com/static/blob.png">
+        <meta name="twitter:description" content="404, not found?">
+        <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+     </head>
+     <body>
+        <div class="colorchange">
+            <div id="color"></div>
+        </div>
+        <div class="startup">
+            <div>
+                <div>
+                    <div>
+                        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                            <path fill="#7289DA" d="M44.6,-76.2C58.4,-69.2,70.7,-58.6,78.5,-45.3C86.3,-32,89.6,-16,89.2,-0.2C88.8,15.5,84.7,31,77.2,44.7C69.6,58.5,58.5,70.4,45.1,77.4C31.7,84.4,15.8,86.6,-0.4,87.3C-16.7,88,-33.3,87.3,-46.7,80.3C-60.1,73.2,-70.3,59.8,-77.3,45.4C-84.4,31,-88.3,15.5,-88.2,0C-88.2,-15.4,-84.1,-30.8,-76.7,-44.6C-69.3,-58.4,-58.5,-70.5,-45.1,-77.8C-31.8,-85.2,-15.9,-87.7,-0.3,-87.2C15.4,-86.8,30.7,-83.3,44.6,-76.2Z" transform="translate(100 100)" />
+                        </svg>
+                        <div>
+                            404
+                            <div>addasasd</div>
+                            <div id="rando"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+     </body>
+ </html>

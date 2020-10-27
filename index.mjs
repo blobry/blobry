@@ -122,31 +122,31 @@ const rgbToHex = (r, g, b) => {
     app.listen(process.env.PORT || 100, () => console.log(`[Interact] Listening to http://localhost:${process.env.PORT || 100}/`));
 
     if(settings.cosmetics.type) for (const backendRaw of [...new Set(apidata.data.map(e => e.series ? e.series.backendValue : null))].filter(e => e)) {
-        const invalidSeries = [{
-            FrozenSeries: 'FrostSeries'
-        }];
-        const backendValue = invalidSeries.find(e => Object.keys(e)[0] === backendRaw) ? invalidSeries.find(e => Object.keys(e)[0] === backendRaw)[Object.keys(invalidSeries.find(e => Object.keys(e)[0] === backendRaw))[0]] : backendRaw;
-        const {
-            VectorParameterValues: values
-        } = (await (await fetch(`https://benbotfn.tk/api/v1/assetProperties?path=FortniteGame/Content/Athena/UI/Frontend/CosmeticItemCard/Materials/M_UI_ItemCard_V2_${backendValue}.uasset`)).json()).export_properties[0];
-        const VectorParameterValues = [];
-        for (const { ParameterValue } of values) {
-            const ValueRound = (e) => Math.round(e * 255);
-            VectorParameterValues.push({
-                R: ValueRound(ParameterValue.R),
-                G: ValueRound(ParameterValue.G),
-                B: ValueRound(ParameterValue.B),
-                A: ValueRound(ParameterValue.A),
-                Hex: rgbToHex(ValueRound(ParameterValue.R), ValueRound(ParameterValue.G), ValueRound(ParameterValue.B))
-            });
-        }
+        // const invalidSeries = [{
+        //     FrozenSeries: 'FrostSeries'
+        // }];
+        // const backendValue = invalidSeries.find(e => Object.keys(e)[0] === backendRaw) ? invalidSeries.find(e => Object.keys(e)[0] === backendRaw)[Object.keys(invalidSeries.find(e => Object.keys(e)[0] === backendRaw))[0]] : backendRaw;
+        // const {
+        //     VectorParameterValues: values
+        // } = (await (await fetch(`https://benbotfn.tk/api/v1/assetProperties?path=FortniteGame/Content/Athena/UI/Frontend/CosmeticItemCard/Materials/M_UI_ItemCard_V2_${backendValue}.uasset`)).json()).export_properties[0];
+        // const VectorParameterValues = [];
+        // for (const { ParameterValue } of values) {
+        //     const ValueRound = (e) => Math.round(e * 255);
+        //     VectorParameterValues.push({
+        //         R: ValueRound(ParameterValue.R),
+        //         G: ValueRound(ParameterValue.G),
+        //         B: ValueRound(ParameterValue.B),
+        //         A: ValueRound(ParameterValue.A),
+        //         Hex: rgbToHex(ValueRound(ParameterValue.R), ValueRound(ParameterValue.G), ValueRound(ParameterValue.B))
+        //     });
+        // }
         for (const [index, value] of apidata.data.entries()) {
-            if(value.series && value.series.backendValue === backendValue) {
-                apidata.data[index].series.VectorParameterValues = VectorParameterValues;
-            }
-            if(value.series && invalidSeries.find(e => Object.keys(e)[0] === value.series.backendValue) && value.series.backendValue === backendRaw) {
-                apidata.data[index].series.VectorParameterValues = VectorParameterValues;
-            }
+            // if(value.series && value.series.backendValue === backendValue) {
+            //     apidata.data[index].series.VectorParameterValues = VectorParameterValues;
+            // }
+            // if(value.series && invalidSeries.find(e => Object.keys(e)[0] === value.series.backendValue) && value.series.backendValue === backendRaw) {
+            //     apidata.data[index].series.VectorParameterValues = VectorParameterValues;
+            // }
             if(settings.cosmetics.images) apidata.data[index].images.new = {
                 small: `https://blobry.herokuapp.com/images/cosmetics/br/${value.id}.png`,
                 icon: `https://blobry.herokuapp.com/images/cosmetics/br/${value.id}.png?size=medium`
@@ -192,12 +192,12 @@ const rgbToHex = (r, g, b) => {
                 const ctx = canvas.getContext('2d');
                 if(b === false) ctx.drawImage(await Image(value.series && value.series.image ? value.series.image : 'https://media.playstation.com/is/image/SCEA/ps4-systems-fortnite-bundle-banner-01-us-26jul19'), 0, 0, width, height);
                 ctx.drawImage(await Image(value.images.icon), p || size.p, 0, height, height);
-                const VectorParameterValues = value.series ? value.series.VectorParameterValues : null;
+                // const VectorParameterValues = value.series ? value.series.VectorParameterValues : null;
                 ctx.save();
-                if(!VectorParameterValues) ctx.fillStyle = rarities[value.rarity.displayValue].Color1;
-                else {
-                    ctx.fillStyle = VectorParameterValues[0].Hex;
-                }
+                ctx.fillStyle = rarities[value.rarity.displayValue].Color1;
+                // else {
+                //     ctx.fillStyle = VectorParameterValues[0].Hex;
+                // }
                 ctx.lineWidth = "5";
                 ctx.rotate(3);
                 ctx.globalAlpha = 0.8;
@@ -205,10 +205,10 @@ const rgbToHex = (r, g, b) => {
                 if(t) {
                     ctx.restore();
                     ctx.beginPath();
-                    if(!VectorParameterValues) ctx.shadowColor = rarities[value.rarity.displayValue].Color1;
-                    else {
-                        ctx.shadowColor = VectorParameterValues[0].Hex;
-                    }
+                    ctx.shadowColor = rarities[value.rarity.displayValue].Color1;
+                    // else {
+                    //     ctx.shadowColor = VectorParameterValues[0].Hex;
+                    // }
                     ctx.shadowBlur = 1;
                     ctx.lineWidth = 10;
                     ctx.fillStyle = 'white';
@@ -220,25 +220,25 @@ const rgbToHex = (r, g, b) => {
                 return Buffer.from(canvas.toDataURL().split(",")[1], 'base64');
             }
             if(settings.cosmetics.images) app.get(`/images/cosmetics/br/${value.id}.png`, async (req, res) => {
-                let ms = 0;
-                let s = setInterval(() => ms += 1, 1);
-                const b = req.query.b === "true";
-                const size = req.query.size;
-                if(!Buffers.find(e => e.id === value.id && e.size === size && e.b === b)) Buffers.push({
-                    buffer: await getImage(value, req, size),
-                    id: value.id,
-                    size,
-                    b
-                });
-                const image = Buffers.find(e => e.id === value.id && e.size === size && e.b === b).buffer;
-                res.writeHead(200, {
-                    'Content-Type': 'image/png',
-                    'Content-Length': image.length
-                });
+                // let ms = 0;
+                // let s = setInterval(() => ms += 1, 1);
+                // const b = req.query.b === "true";
+                // const size = req.query.size;
+                // if(!Buffers.find(e => e.id === value.id && e.size === size && e.b === b)) Buffers.push({
+                //     buffer: await getImage(value, req, size),
+                //     id: value.id,
+                //     size,
+                //     b
+                // });
+                // const image = Buffers.find(e => e.id === value.id && e.size === size && e.b === b).buffer;
+                // res.writeHead(200, {
+                //     'Content-Type': 'image/png',
+                //     'Content-Length': image.length
+                // });
 
-                res.end(image); 
-                clearInterval(s);
-                console.log(ms);
+                // res.end(image); 
+                // clearInterval(s);
+                // console.log(ms);
             });
 
             if(settings.cosmetics.widgets) app.get(`/widgets/cosmetics/br/${value.id}.widget`, async (req, res) => {
