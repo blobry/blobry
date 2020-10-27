@@ -223,12 +223,14 @@ const rgbToHex = (r, g, b) => {
                 let ms = 0;
                 let s = setInterval(() => ms += 1, 1);
                 const b = req.query.b === "true";
+                const t = req.query.t === "true";
                 const size = req.query.size;
-                if(!Buffers.find(e => e.id === value.id && e.size === size && e.b === b)) Buffers.push({
+                if(!Buffers.find(e => e.id === value.id && e.size === size && e.b === b && e.t === t)) Buffers.push({
                     buffer: await getImage(value, req, size),
                     id: value.id,
                     size,
-                    b
+                    b,
+                    t
                 });
                 const image = Buffers.find(e => e.id === value.id && e.size === size && e.b === b).buffer;
                 res.writeHead(200, {
