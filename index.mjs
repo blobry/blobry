@@ -49,6 +49,62 @@ const rgbToHex = (r, g, b) => {
 
 (async () => {
     const Image = async (src) => new Promise((resolve) => loadImage(src).then(resolve));
+    const getImage = async (value, req, size) => {
+        const sizes = {
+            small: {
+                width: 113,
+                height: 140,
+                x: -120,
+                y: -273,
+                p: -10
+            },
+            medium: {
+                width: 512,
+                height: 512,
+                x: -448,
+                y: -1000,
+                p: 0
+            }
+        };
+        size = sizes[size] || sizes.small;
+        const p = req.query.p;
+        const x = req.query.x;
+        const y = req.query.y;
+        const b = req.query.b === "true";
+        const t = req.query.t === "true";
+        const width = size.width;
+        const height = size.height;
+        const canvas = new Canvas(width, height);
+        const ctx = canvas.getContext('2d');
+        if(b === false) ctx.drawImage(await Image(value.series && value.series.image ? value.series.image : 'https://media.playstation.com/is/image/SCEA/ps4-systems-fortnite-bundle-banner-01-us-26jul19'), 0, 0, width, height);
+        ctx.drawImage(await Image(value.images.icon), p || size.p, 0, height, height);
+        // const VectorParameterValues = value.series ? value.series.VectorParameterValues : null;
+        ctx.save();
+        ctx.fillStyle = rarities[value.rarity.displayValue].Color1;
+        // else {
+        //     ctx.fillStyle = VectorParameterValues[0].Hex;
+        // }
+        ctx.lineWidth = "5";
+        ctx.rotate(3);
+        ctx.globalAlpha = 0.8;
+        ctx.fillRect(x || size.x, y || size.y, height + 60, height);
+        if(t) {
+            ctx.restore();
+            ctx.beginPath();
+            ctx.shadowColor = rarities[value.rarity.displayValue].Color1;
+            // else {
+            //     ctx.shadowColor = VectorParameterValues[0].Hex;
+            // }
+            ctx.shadowBlur = 1;
+            ctx.lineWidth = 10;
+            ctx.fillStyle = 'white';
+            ctx.lineWidth = "5";
+            ctx.font = "bold 65px text";
+            ctx.textAlign = "center";
+            ctx.fillText(value.name, 512 / 2, 450, 512);
+        }
+        return Buffer.from(canvas.toDataURL().split(",")[1], 'base64');
+    }
 
     const settings = {
         cosmetics: {
@@ -163,96 +219,89 @@ const rgbToHex = (r, g, b) => {
                     without: `<iframe src="https://blobry.herokuapp.com/widget?i=${value.id}" width="140" height="140" frameborder="0"></iframe>`
                 }
             };
-            const getImage = async (value, req, size) => {
-                const sizes = {
-                    small: {
-                        width: 113,
-                        height: 140,
-                        x: -120,
-                        y: -273,
-                        p: -10
-                    },
-                    medium: {
-                        width: 512,
-                        height: 512,
-                        x: -448,
-                        y: -1000,
-                        p: 0
-                    }
-                };
-                size = sizes[size] || sizes.small;
-                const p = req.query.p;
-                const x = req.query.x;
-                const y = req.query.y;
-                const b = req.query.b === "true";
-                const t = req.query.t === "true";
-                const width = size.width;
-                const height = size.height;
-                const canvas = new Canvas(width, height);
-                const ctx = canvas.getContext('2d');
-                if(b === false) ctx.drawImage(await Image(value.series && value.series.image ? value.series.image : 'https://media.playstation.com/is/image/SCEA/ps4-systems-fortnite-bundle-banner-01-us-26jul19'), 0, 0, width, height);
-                ctx.drawImage(await Image(value.images.icon), p || size.p, 0, height, height);
-                // const VectorParameterValues = value.series ? value.series.VectorParameterValues : null;
-                ctx.save();
-                ctx.fillStyle = rarities[value.rarity.displayValue].Color1;
-                // else {
-                //     ctx.fillStyle = VectorParameterValues[0].Hex;
-                // }
-                ctx.lineWidth = "5";
-                ctx.rotate(3);
-                ctx.globalAlpha = 0.8;
-                ctx.fillRect(x || size.x, y || size.y, height + 60, height);
-                if(t) {
-                    ctx.restore();
-                    ctx.beginPath();
-                    ctx.shadowColor = rarities[value.rarity.displayValue].Color1;
-                    // else {
-                    //     ctx.shadowColor = VectorParameterValues[0].Hex;
-                    // }
-                    ctx.shadowBlur = 1;
-                    ctx.lineWidth = 10;
-                    ctx.fillStyle = 'white';
-                    ctx.lineWidth = "5";
-                    ctx.font = "bold 65px text";
-                    ctx.textAlign = "center";
-                    ctx.fillText(value.name, 512 / 2, 450, 512);
-                }
-                return Buffer.from(canvas.toDataURL().split(",")[1], 'base64');
-            }
-            if(settings.cosmetics.images) app.get(`/images/cosmetics/br/${value.id}.png`, async (req, res) => {
-                let ms = 0;
-                let s = setInterval(() => ms += 1, 1);
-                const b = req.query.b === "true";
-                const t = req.query.t === "true";
-                const size = req.query.size;
-                if(!Buffers.find(e => e.id === value.id && e.size === size && e.b === b && e.t === t)) Buffers.push({
-                    buffer: await getImage(value, req, size),
-                    id: value.id,
-                    size,
-                    b,
-                    t
-                });
-                const image = Buffers.find(e => e.id === value.id && e.size === size && e.b === b).buffer;
-                res.writeHead(200, {
-                    'Content-Type': 'image/png',
-                    'Content-Length': image.length
-                });
+            // if(settings.cosmetics.images)
 
-                res.end(image); 
-                clearInterval(s);
-                console.log(ms);
-            });
-
-            if(settings.cosmetics.widgets) app.get(`/widgets/cosmetics/br/${value.id}.widget`, async (req, res) => {
-                const b = req.query.b === "true";
-                const item = value;
-                res.send(`<!DOCTYPE html><html><head><meta name="theme-color" content="${item.series && item.series.VectorParameterValues ? item.series.VectorParameterValues[0].Hex : rarities[item.rarity.displayValue].Color1}"><meta content="Blobry Fortnite-API Remake Icons" property="og:site_name"><meta property="og:url" content="${item.widget}"><meta property="og:type" content="website"><meta property="og:title" content="${item.name}"><meta property="og:description" content="${item.description}"><meta property="og:image" itemprop="image" content="${item.images.new.icon}?b=${b}"><meta property="twitter:url" content="${item.widget}"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="${item.name}"><meta name="twitter:description" content="${item.description}"><meta name="twitter:image" content="${item.images.new.icon}?b=${b}"><script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script><script>$(document).ready(async () => {$('.item').children('div').hover((e) => {const target = e.currentTarget.parentElement;target.children[0].children[0].style.width = '155px';target.children[0].children[0].style.left = '-21px';target.children[1].style.top = '118px';}, (e) => {const target = e.currentTarget.parentElement;target.children[0].children[0].style.width = '';target.children[0].children[0].style.left = '';target.children[1].style.top = '';});});</script><style>.item {width: 113px;height: 140px;background-image: url(${b === false ? item.series && item.series.image ? item.series.image : 'https://media.playstation.com/is/image/SCEA/ps4-systems-fortnite-bundle-banner-01-us-26jul19' : ''});background-repeat: no-repeat;background-size: 113px 140px;overflow: hidden;transition: 0.2s;position: absolute;left: 0;top: 0;}.item > div:nth-of-type(1) {width: 113px;height: 140px;position: absolute;overflow: hidden;}.item img {width: 140px;position: absolute;left: -15px;transition: 0.2s;}.item > div:nth-of-type(2) {width: 100%;background: rgb(177, 177, 177);height: 100%;position: relative;top: 114px;transform: rotate(85deg);transition: 0.2s;opacity: 0.8;}</style></head><body><div class="item"><div><img src="${item.images.icon}"></div><div style="background: ${item.series && item.series.VectorParameterValues ? item.series.VectorParameterValues[0].Hex : rarities[item.rarity.displayValue].Color1};"></div></div></body></html>`);
-            });
+            // if(settings.cosmetics.widgets) app.get(`/widgets/cosmetics/br/${value.id}.widget`, async (req, res) => {
+            //     const b = req.query.b === "true";
+            //     const item = value;
+            // });
         }
     }
 
     app.get('/api/cosmetics', async (req, res) => {
         res.send(apidata);
+    });
+
+    app.get(`/images/cosmetics/br/:id/medium.png`, async (req, res) => {
+        const id = req.params.id;
+        const value = apidata.data.find(e => e.id === id);
+        if(!value) return res.status(404).send('404 - Item not found.');
+        let ms = 0;
+        let s = setInterval(() => ms += 1, 1);
+        const b = req.query.b === "true";
+        const t = false;
+        const size = null;
+        if(!Buffers.find(e => e.id === value.id && e.size === size && e.b === b && e.t === t)) Buffers.push({
+            buffer: await getImage(value, req, size),
+            id: value.id,
+            size,
+            b,
+            t
+        });
+        const image = Buffers.find(e => e.id === value.id && e.size === size && e.b === b).buffer;
+        res.writeHead(200, {
+            'Content-Type': 'image/png',
+            'Content-Length': image.length
+        });
+
+        res.end(image); 
+        clearInterval(s);
+        console.log(ms);
+    });
+
+    app.get(`/widgets/cosmetics/br/:id`, async (req, res) => {
+        const id = req.params.id;
+        const item = apidata.data.find(e => e.id === id);
+        if(!item) return res.status(404).send('404 - Item not found.');
+        const b = req.query.b === "true";
+        res.send(`<!DOCTYPE html><html><head><meta name="theme-color" content="${item.series && item.series.VectorParameterValues ? item.series.VectorParameterValues[0].Hex : rarities[item.rarity.displayValue].Color1}"><meta content="Blobry Fortnite-API Remake Icons" property="og:site_name"><meta property="og:url" content="${item.widget}"><meta property="og:type" content="website"><meta property="og:title" content="${item.name}"><meta property="og:description" content="${item.description}"><meta property="og:image" itemprop="image" content="${item.images.new.icon}?b=${b}"><meta property="twitter:url" content="${item.widget}"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="${item.name}"><meta name="twitter:description" content="${item.description}"><meta name="twitter:image" content="${item.images.new.icon}?b=${b}"><script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script><script>$(document).ready(async () => {$('.item').children('div').hover((e) => {const target = e.currentTarget.parentElement;target.children[0].children[0].style.width = '155px';target.children[0].children[0].style.left = '-21px';target.children[1].style.top = '118px';}, (e) => {const target = e.currentTarget.parentElement;target.children[0].children[0].style.width = '';target.children[0].children[0].style.left = '';target.children[1].style.top = '';});});</script><style>.item {width: 113px;height: 140px;background-image: url(${b === false ? item.series && item.series.image ? item.series.image : 'https://media.playstation.com/is/image/SCEA/ps4-systems-fortnite-bundle-banner-01-us-26jul19' : ''});background-repeat: no-repeat;background-size: 113px 140px;overflow: hidden;transition: 0.2s;position: absolute;left: 0;top: 0;}.item > div:nth-of-type(1) {width: 113px;height: 140px;position: absolute;overflow: hidden;}.item img {width: 140px;position: absolute;left: -15px;transition: 0.2s;}.item > div:nth-of-type(2) {width: 100%;background: rgb(177, 177, 177);height: 100%;position: relative;top: 114px;transform: rotate(85deg);transition: 0.2s;opacity: 0.8;}</style></head><body><div class="item"><div><img src="${item.images.icon}"></div><div style="background: ${item.series && item.series.VectorParameterValues ? item.series.VectorParameterValues[0].Hex : rarities[item.rarity.displayValue].Color1};"></div></div></body></html>`);
+    });
+
+    app.get(`/images/cosmetics/br/:id/large.png`, async (req, res) => {
+        const id = req.params.id;
+        const value = apidata.data.find(e => e.id === id);
+        if(!value) return res.status(404).send('404 - Item not found.');
+        let ms = 0;
+        let s = setInterval(() => ms += 1, 1);
+        const b = req.query.b === "true";
+        const t = req.query.t === "true";
+        const size = 'medium';
+        if(!Buffers.find(e => e.id === value.id && e.size === size && e.b === b && e.t === t)) Buffers.push({
+            buffer: await getImage(value, req, size),
+            id: value.id,
+            size,
+            b,
+            t
+        });
+        const image = Buffers.find(e => e.id === value.id && e.size === size && e.b === b && e.t === t).buffer;
+        res.writeHead(200, {
+            'Content-Type': 'image/png',
+            'Content-Length': image.length
+        });
+
+        res.end(image); 
+        clearInterval(s);
+        console.log(ms);
+    });
+
+    app.get(`/images/cosmetics/br/:id`, async (req, res) => {
+        const id = req.params.id;
+        const value = apidata.data.find(e => e.id === id);
+        if(!value) return res.status(404).send('404 - Item not found.');
+        res.send({
+            large: `https://blobry.herokuapp.com/images/cosmetics/br/${value.id}/large.png`,
+            medium: `https://blobry.herokuapp.com/images/cosmetics/br/${value.id}/medium.png`   
+        });
     });
 
     app.get('/images/cosmetics/combine', async (req, res) => {
