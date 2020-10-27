@@ -1,5 +1,5 @@
 /**
- * Copyright 2020 Teenari
+ * Copyright 2020 Tector
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,9 +23,9 @@ class Blobry {
             `Already blob ${this.todayName}???`,
             `Hey it's ${new Date().getHours()}, so, ${new Date().getHours()} blob row!`,
             "finna blob up in here",
-            "teenari caodaar - haha yes",
+            "tector caodaar - haha yes",
             "epic caodaar - haha yes",
-            "azlee is not funny. - azlee - idc - teenari",
+            "azlee is not funny. - azlee - idc - tector",
             "rip professionalism 2020 to 2020"
         ];
         this.randomMessage = this.randomMessages[Math.floor(Math.random() * this.randomMessages.length)];
