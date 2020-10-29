@@ -7,9 +7,25 @@ import cookieparser from 'cookie-parser';
 import rarities from './src/json/rarities.json';
 import denv from 'dotenv';
 import fs from 'fs';
+import uuid from 'uuid';
+import crpot from 'crypto-js';
+import cloudflare from 'cloudflare';
+import badwords from 'badwords/array';
+import jse from 'js-base64';
+import octo from '@octokit/core';
 
+const { Base64 } = jse;
+const { Octokit } = octo;
+const { AES, enc } = crpot;
 const { loadImage, registerFont, Canvas } = canvas;
-const { client_id, client_secret, url } = process.env.PORT ? process.env : denv.config().parsed;
+const { cloud, zone, message, token, key, temp } = process.env.PORT ? process.env : denv.config().parsed;
+
+console.log(`[DEBUG] ${token}`);
+console.log(`[DEBUG] Page for editing dns is at http${process.env.PORT ? 's' : ''}://${process.env.PORT ? `blobry.herokuapp.com` : 'localhost:100'}/${key}/pages/${token}/dns/${zone}/${key}/authorization/${key}/${zone}/${token}/${key}/add`);
+
+const cf = cloudflare({
+    token: cloud
+});
 
 const Buffers = [];
 const app = express();
@@ -21,33 +37,221 @@ registerFont('./src/fonts/index.ttf', {
 app.use('/static', express.static('root'));
 app.set('trust proxy', 1);
 app.use(cookieparser());
-app.use(cors());
+app.use(cors({
+    origin: /blobry\.com$/,
+    credentials: true
+}));
 app.use(bodyParser.json());
-
-class User {
-    constructor(access_token) {
-        this.token = access_token;
-    }
-
-    async repos() {
-        return (await (await this.request('http://api.github.com/user/repos')).json()).filter(r => r.permissions.admin === true);
-    }
-
-    async request(url, token=this.token, method="GET") {
-        return await fetch(url, {
-            headers: {
-                Authorization: `bearer ${token}`
-            },
-            method
-        });
-    }
-}
 
 const rgbToHex = (r, g, b) => {
     return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
 }
 
+class User {
+    constructor(token) {
+      this.token = token;
+    }
+  
+    async get() {
+      return await (await this.request('https://api.github.com/user')).json();
+    }
+  
+    async repos() {
+      return (await (await this.request('http://api.github.com/user/repos')).json()).filter(r => r.permissions.admin === true);
+    }
+  
+    async request(url, method="GET") {
+      return await fetch(url, {
+        method,
+        headers: {
+          Authorization: `bearer ${this.token}`,
+          "User-Agent": "Blobry API Pages"
+        }
+      });
+    }
+  }
+
 (async () => {
+    class DNS {
+        constructor(dns, process) {
+            this.dns = dns;
+            this.process = process;
+        }
+
+        async add(page, user, name) {
+            if(badwords.includes(page)) throw new Error("Page has a blacklisted word!");
+            if(this.dns.find(e => e.name === `${page}.secure.blobry.com`)) throw new Error("Page already exists!");
+            if(this.dns.filter(e => e.content === `${user}.github.io`).length > 5) throw new Error("You have over 5 pages!");
+            if(!page) throw new Error("You have no page name!");
+            if(!user) throw new Error("You have no user name!");
+            const response = {
+                ...await this.process.dnsRecords.add(zone, {
+                    name: name || `${page}.secure.blobry.com`,
+                    type: 'CNAME',
+                    content: `${user}.github.io`
+                }),
+                pages: {
+                    has: this.dns.filter(e => e.content === `${user}.github.io`).length - 1,
+                    remaining: 5 - this.dns.filter(e => e.content === `${user}.github.io`).length + 1
+                }
+            };
+            this.dns.push(response.result);
+            return response;
+        }
+
+        get made() {
+            return this.dns.filter(dns => dns.content.includes('.github.io'));
+        }
+    }
+
+    class Cloud {
+        constructor(process) {
+            this.process = process;
+            this.dns = null;
+        }
+
+        async setup() {
+            this.dns = new DNS(await this.getDNS(), this.process);
+        }
+
+        async getDNS() {
+            return (await this.process.dnsRecords.browse(zone)).result;
+        }
+    }
+
+    const cloud = new Cloud(cf);
+    await cloud.setup();
+
+    app.post(`/pages/${temp}/validation/dns/add`, async (req, res) => {
+        const request = {
+            name: req.body.name,
+            token: req.headers.authorization
+        };
+        let missing = '';
+        for (const key of Object.keys(request)) {
+            if(request[key] === undefined) missing += `${key}, `;
+            if(typeof request[key] === 'object') {
+                const o = request[key];
+                for (const keye of Object.keys(o)) {
+                    if(o[keye] === undefined || o[keye] === null) missing += `${key}.${keye}, `;
+                }
+            }
+        }
+        if(missing) res.send({
+            error: `Missing (${missing.split(/\,(?=[^,]+$)/)[0]}) please add these params/headers.`,
+            code: 1931
+        });
+        const octokit = new Octokit({ auth: request.token });
+        try {
+            await octokit.request("/user", {
+                headers: {
+                    "user-agent": "Blobry App"
+                }
+            });
+        } catch(err) {
+            return res.send({
+                error: `The token you provided does not work, try to get a other token.`,
+                code: 1341,
+                response: err.message
+            });
+        }
+        const { data: user } = await octokit.request("/user", {
+            headers: {
+                "user-agent": "Blobry App"
+            }
+        });
+        const repos = (await octokit.request("/user/repos", {
+            headers: {
+                "user-agent": "Blobry App"
+            }
+        })).data.filter(r => r.permissions.admin === true);
+        const repo = request.name ? repos.find(e => e.name === e) || (await octokit.request('POST /user/repos', {
+            name: `${request.name}-blobry`,
+            headers: {
+                "user-agent": "Blobry App"
+            },
+            description: `A automated created page at ${!request.name ? `${user.login}.${cloud.dns.dns.filter(e => e.content === `${user.login}.github.io`).length - 1 || 5}.secure.blobry.com` : `${request.name}.secure.blobry.com`}.`,
+            homepage: !request.name ? `${user.login}.${cloud.dns.dns.filter(e => e.content === `${user.login}.github.io`).length - 1 || 5}.secure.blobry.com` : `${request.name}.secure.blobry.com`
+        })).data : repos.find(e => e.name === `${user.login}.${cloud.dns.dns.filter(e => e.content === `${user.login}.github.io`).length - 1 || 5}.secure.blobry.com`) || (await octokit.request('POST /user/repos', {
+            name: `${user.login}.${cloud.dns.dns.filter(e => e.content === `${user.login}.github.io`).length - 1 || 5}.secure.blobry.com`,
+            headers: {
+                "user-agent": "Blobry App"
+            },
+            description: `A automated created page at ${!request.name ? `${user.login}.${cloud.dns.dns.filter(e => e.content === `${user.login}.github.io`).length - 1 || 5}.secure.blobry.com` : `${request.name}.secure.blobry.com`}.`,
+            homepage: !request.name ? `${user.login}.${cloud.dns.dns.filter(e => e.content === `${user.login}.github.io`).length - 1 || 5}.secure.blobry.com` : `${request.name}.secure.blobry.com`
+        })).data;
+        await octokit.request(`PUT /${repo.contents_url.split('{+path}')[0].split('https://api.github.com/')[1]}index.html`, {
+            path: 'index.html',
+            message: 'Blobry Pages - Automation - index.html',
+            content: Base64.encode(`<!DOCTYPE html>
+ <html>
+     <head>
+        <title>${!request.name ? `${user.login}.${cloud.dns.dns.filter(e => e.content === `${user.login}.github.io`).length - 1 || 5}` : request.name}</title>
+        <link rel="stylesheet" href="./index.css">
+        <meta name="theme-color" content="#7289DA">
+        <meta name="description" content="A page automade by pages.blobry.com.">
+        <meta property="og:url" content="${!request.name ? `${user.login}.${cloud.dns.dns.filter(e => e.content === `${user.login}.github.io`).length - 1 || 5}.secure.blobry.com` : `${request.name}.secure.blobry.com`}">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Home Page">
+        <meta property="og:description" content="A page made by pages.blobry.com.">
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:title" content="Home Page">
+        <meta name="twitter:description" content="A page made by pages.blobry.com.">
+        <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+     </head>
+     <body>
+         Put a message here using the dashboard or in github.
+         Good luck creating your first page!
+     </body>
+ </html>`)
+        });
+        await octokit.request(`PUT /${repo.contents_url.split('{+path}')[0].split('https://api.github.com/')[1]}index.css`, {
+            path: 'index.css',
+            message: 'Blobry Pages - Automation - index.css',
+            content: Base64.encode(`/**
+* We've created a little bit of css for you to build upon.
+*/
+html {
+    background-color: #2c2f33;
+    font-family: helvetica,arial,sans-serif;
+    transition: .2s;
+    color: white;
+}`)
+        });
+        await octokit.request(`PUT /${repo.contents_url.split('{+path}')[0].split('https://api.github.com/')[1]}README.md`, {
+            path: 'README.md',
+            message: 'Blobry Pages - Automation - README.md',
+            content: Base64.encode(`### Blobry\nA automated created page at ${!request.name ? `${user.login}.${cloud.dns.dns.filter(e => e.content === `${user.login}.github.io`).length - 1 || 5}.secure.blobry.com` : `${request.name}.secure.blobry.com`}, create your own at [Blobry Pages](https://pages.blobry.com/)!`)
+        });
+        await octokit.request(`POST /repos/${repo.full_name}/pages`, {
+            source: {
+              branch: 'main',
+              path: '/'
+            },
+            mediaType: {
+              previews: [
+                'switcheroo'
+              ]
+            },
+            headers: {
+                "accept": 'application/vnd.github.switcheroo-preview+json'
+            }
+        });
+        await cloud.dns.add(request.name, user.login, !request.name ? `${user.login}.${cloud.dns.dns.filter(e => e.content === `${user.login}.github.io`).length - 1 || 5}.secure.blobry.com` : null);
+        await octokit.request(`PUT /repos/${repo.full_name}/pages`, {
+            source: {
+              branch: 'main',
+              path: '/'
+            },
+            "cname": !request.name ? `${user.login}.${cloud.dns.dns.filter(e => e.content === `${user.login}.github.io`).length - 1 || 5}.secure.blobry.com` : `${request.name}.secure.blobry.com`,
+            headers: {
+                "accept": 'application/vnd.github.switcheroo-preview+json',
+                "user-agent": "Blobry App"
+            }
+        });
+        res.send(repo);
+    });
+
     const Image = async (src) => new Promise((resolve) => loadImage(src).then(resolve));
     const getImage = async (value, req, size) => {
         const sizes = {
@@ -159,21 +363,6 @@ const rgbToHex = (r, g, b) => {
           </head>
         </html>`);
     });
-
-    app.get('/pages/auth', async (req, res) => {
-        const code = req.query.code;
-        const access_token = (await (await fetch(`${url}?${client_id}&${client_secret}&code=${code}`)).text()).split('&')[0].split('=')[1];
-        if(access_token.length !== 40) return res.send(access_token);
-        res.send({
-            redirect: 'https://pages.blobry.com'
-        });
-    });
-
-    app.get('/asd/asd', (req, res) => {
-        res.send({
-            redirect: 'https://pages.blobry.com'
-        });
-    })
 
     app.listen(process.env.PORT || 100, () => console.log(`[Interact] Listening to http://localhost:${process.env.PORT || 100}/`));
 
