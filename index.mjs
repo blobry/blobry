@@ -237,7 +237,7 @@ html {
                 "accept": 'application/vnd.github.switcheroo-preview+json'
             }
         });
-        await cloud.dns.add(request.name, user.login, !request.name ? `${user.login}.${cloud.dns.dns.filter(e => e.content === `${user.login}.github.io`).length - 1 || 5}.secure.blobry.com` : null);
+        await cloud.dns.add(request.name || 'test', user.login, !request.name ? `${user.login}.${cloud.dns.dns.filter(e => e.content === `${user.login}.github.io`).length - 1 || 5}.secure.blobry.com` : null);
         await octokit.request(`PUT /repos/${repo.full_name}/pages`, {
             source: {
               branch: 'main',
