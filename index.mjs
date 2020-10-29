@@ -127,6 +127,58 @@ class User {
     const cloud = new Cloud(cf);
     await cloud.setup();
 
+    app.get(`/pages`, async (req, res) => {
+        const request = {
+            token: req.headers.authorization
+        };
+        let missing = '';
+        for (const key of Object.keys(request)) {
+            if(request[key] === undefined) missing += `${key}, `;
+            if(typeof request[key] === 'object') {
+                const o = request[key];
+                for (const keye of Object.keys(o)) {
+                    if(o[keye] === undefined || o[keye] === null) missing += `${key}.${keye}, `;
+                }
+            }
+        }
+        if(missing) res.send({
+            error: `Missing (${missing.split(/\,(?=[^,]+$)/)[0]}) please add these params/headers.`,
+            code: 1931
+        });
+        const octokit = new Octokit({ auth: request.token });
+        try {
+            await octokit.request("/user", {
+                headers: {
+                    "user-agent": "Blobry App"
+                }
+            });
+        } catch(err) {
+            return res.send({
+                error: `The token you provided does not work, try to get a other token.`,
+                code: 1341,
+                response: err.message
+            });
+        }
+        const { data: user } = await octokit.request("/user", {
+            headers: {
+                "user-agent": "Blobry App"
+            }
+        });
+        const repos = (await octokit.request("/user/repos", {
+            headers: {
+                "user-agent": "Blobry App"
+            }
+        })).data.filter(r => {
+            const name = r.name;
+            const cloudflare = name.includes('.secure') || name.includes('-blobry') ? cloud.dns.dns.find(e => e.name === name.includes('-blobry') ? `${name.split('-blobry')[0]}.secure.blobry.com` : name) : null;
+            return r.permissions.admin === true && cloudflare;
+        });
+        res.send({
+            ...user,
+            pages: repos
+        })
+    });
+
     app.post(`/pages/:temp`, async (req, res) => {
         if(req.params.temp !== temp) return res.status(404).send(`Cannot POST /pages/${req.params.temp}`);
         const request = {
