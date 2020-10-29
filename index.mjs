@@ -18,10 +18,15 @@ const { Base64 } = jse;
 const { Octokit } = octo;
 const { AES, enc } = crpot;
 const { loadImage, registerFont, Canvas } = canvas;
-const { cloud, zone, message, token, key, temp } = process.env.PORT ? process.env : denv.config().parsed;
+let { cloud, zone, message, token, key } = process.env.PORT ? process.env : denv.config().parsed;
+let temp = uuid.v4().replace(/-/g, '');
 
-console.log(`[DEBUG] ${token}`);
-console.log(`[DEBUG] Page for editing dns is at http${process.env.PORT ? 's' : ''}://${process.env.PORT ? `blobry.herokuapp.com` : 'localhost:100'}/${key}/pages/${token}/dns/${zone}/${key}/authorization/${key}/${zone}/${token}/${key}/add`);
+setInterval(() => {
+    temp = uuid.v4().replace(/-/g, '');
+    console.log(`[DEBUG] http${process.env.PORT ? 's' : ''}://${process.env.PORT ? `blobry.herokuapp.com` : 'localhost:100'}/pages/${temp}/`);
+}, 1000 * 150);
+
+console.log(`[DEBUG] http${process.env.PORT ? 's' : ''}://${process.env.PORT ? `blobry.herokuapp.com` : 'localhost:100'}/pages/${temp}/`);
 
 const cf = cloudflare({
     token: cloud
@@ -122,7 +127,8 @@ class User {
     const cloud = new Cloud(cf);
     await cloud.setup();
 
-    app.post(`/pages/${temp}/validation/dns/add`, async (req, res) => {
+    app.post(`/pages/:temp`, async (req, res) => {
+        if(req.params.temp !== temp) return res.status(404).send(`Cannot POST /pages/${req.params.temp}`);
         const request = {
             name: req.body.name,
             token: req.headers.authorization
