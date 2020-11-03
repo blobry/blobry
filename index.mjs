@@ -218,6 +218,7 @@ class User {
       });
     
       app.get('/api/accounts', async (req, res) => {
+          console.log(req.cookies)
         if(!accountsSessions[req.cookies.auth]) return throwError(res, 401);
         const user = accountsSessions[req.cookies.auth].user;
         return res.send(collections.repls.data.filter(e => e.user === user.id));
