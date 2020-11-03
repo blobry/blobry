@@ -220,19 +220,20 @@ class User {
       app.get('/api/accounts', async (req, res) => {
         if(!accountsSessions[req.cookies.auth]) return throwError(res, 401);
         const user = accountsSessions[req.cookies.auth].user;
-        const AuthorizeMethods = getNonUsedAuths();
-        const response = {
-          auth: AuthorizeMethods.length !== 0,
-          accounts: []
-        }
-        if(collections.repls.data.find(e => e.user === user.id)) response.accounts.push(collections.repls.data.find(e => e.user === user.id));
-        if(AuthorizeMethods.length !== 0) {
-          for (const account of AuthorizeMethods) {
-            response.accounts.push({
-              name: account.displayName
-            });
-          }
-        }
+        return res.send(collections.repls.data.filter(e => e.user === user.id));
+        // const AuthorizeMethods = getNonUsedAuths();
+        // const response = {
+        //   auth: AuthorizeMethods.length !== 0,
+        //   accounts: []
+        // }
+        // if(collections.repls.data.find(e => e.user === user.id)) response.accounts.push(collections.repls.data.find(e => e.user === user.id));
+        // if(AuthorizeMethods.length !== 0) {
+        //   for (const account of AuthorizeMethods) {
+        //     response.accounts.push({
+        //       name: account.displayName
+        //     });
+        //   }
+        // }
         res.send(response);
       });
     
