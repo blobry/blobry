@@ -318,7 +318,7 @@ class User {
         if(accountsSessions[req.query.auth]) return res.redirect('http://fort.blobry.com/');
         const auth = await (await fetch('https://discordapp.com/api/oauth2/token', {
           method: 'POST',
-          body: `client_id=763165673161490442&client_secret=65cIP2S33L-NhqtI4NhySGZsFUoCeLGp&grant_type=authorization_code&redirect_uri=https://api.blobry.com/authorize&code=${code}&scope=identify+guilds`,
+          body: `client_id=763165673161490442&client_secret=65cIP2S33L-NhqtI4NhySGZsFUoCeLGp&grant_type=authorization_code&redirect_uri=https://fort.blobry.com/api/authorize&code=${code}&scope=identify`,
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
           }
