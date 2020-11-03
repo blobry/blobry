@@ -126,13 +126,11 @@ class User {
     const collections = {
         authorized: {
             data: (await (client.db('Fort').collection('Users')).findOne({ "_id": new ObjectId('5fa0b33e67807ffd014edd59')})).data,
-            collection: await (client.db('Fort').collection('Users')).findOne({ "_id": new ObjectId('5fa0b33e67807ffd014edd59')}),
-            update: (await (client.db('Fort').collection('Users')).findOne({ "_id": new ObjectId('5fa0b33e67807ffd014edd59')})).findOneAndUpdate
+            collection: await (client.db('Fort').collection('Users')).findOne({ "_id": new ObjectId('5fa0b33e67807ffd014edd59')})
         },
         repls: {
           data: (await (client.db('Fort').collection('Repl.it')).findOne({ "_id": new ObjectId('5fa0b61bf083fc52bb69202f')})).data,
-          collection: await (client.db('Fort').collection('Repl.it')).findOne({ "_id": new ObjectId('5fa0b61bf083fc52bb69202f')}),
-          update: (await (client.db('Fort').collection('Repl.it')).findOne({ "_id": new ObjectId('5fa0b61bf083fc52bb69202f')})).findOneAndUpdate
+          collection: await (client.db('Fort').collection('Repl.it')).findOne({ "_id": new ObjectId('5fa0b61bf083fc52bb69202f')})
         }
     }
 
@@ -157,7 +155,7 @@ class User {
             if(collections.repls.data.filter(e => e.user === user.id)[5]) return throwError(res, 403, 'You can only have five custom on each account.');
             if(collections.repls.data.find(e => e.name === name)) return throwError(res, 403, 'A bot with that name exists!');
             if(collections.repls.data.find(e => e.repl === repl)) return throwError(res, 403, 'A bot with that repl.it link exists!');
-            collections.repls.update({
+            collections.repls.collection.findOneAndUpdate({
               _id: new ObjectId('5fa0b61bf083fc52bb69202f'),
             }, {
               $push: {
@@ -182,7 +180,7 @@ class User {
             if(!repl || !name || !cid || !old || !old.name) return throwError(res, 403, 'Parameters are missing and is needed.');
             const collection = collections.repls.data.find(e => e.name === old.name && e.repl === repl);
             if(!collection) return throwError(res, 403, 'Bot doesn\' exist!');
-            collections.repls.update({
+            collections.repls.collection.findOneAndUpdate({
               _id: new ObjectId('5fa0b61bf083fc52bb69202f'),
               "data.name": old.name,
               "data.repl": repl,
@@ -202,7 +200,7 @@ class User {
             if(!repl) return throwError(res, 403, 'Parameters are missing and is needed.');
             const collection = collections.repls.data.find(e => e.repl === repl);
             if(!collection) return throwError(res, 403, 'Bot doesn\' exist!');
-            collections.repls.update({
+            collections.repls.collection.findOneAndUpdate({
               _id: new ObjectId("5fa0b61bf083fc52bb69202f")
             }, {
               $pull: {
@@ -334,7 +332,7 @@ class User {
           sameSite: 'none',
           secure: true
         });
-        collections.authorized.update({
+        collections.authorized.collection.findOneAndUpdate({
           "_id": new ObjectId('5fa0b33e67807ffd014edd59'),
         }, {$push: {data: token}});
         return res.redirect('http://fort.blobry.com/');
