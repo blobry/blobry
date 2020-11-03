@@ -8,6 +8,7 @@ import rarities from './src/json/rarities.json';
 import denv from 'dotenv';
 import fs from 'fs';
 import uuid from 'uuid';
+import crpot from 'crypto-js';
 import cloudflare from 'cloudflare';
 import badwords from 'badwords/array';
 import jse from 'js-base64';
@@ -20,7 +21,46 @@ const { MongoClient, ObjectId } = mongodb;
 const { loadImage, registerFont, Canvas } = canvas;
 let { cloud, zone, name, username, password } = process.env.PORT ? process.env : denv.config().parsed;
 let temp = uuid.v4().replace(/-/g, '');
+const { AES, enc } = crpot;
 const accountsSessions = {};
+const statusCodetoObject = {
+    401: {
+        error: 'fort.errors.auth.required',
+        message: 'Please authorize to use this endpoint.'
+    },
+    529: {
+        error: 'fort.accounts.full',
+        message: 'Please try again later.'
+    },
+    404: {
+        error: 'fort.action.notFound',
+        message: 'The action or thing is not found.'
+    },
+    400: {
+        error: 'fort.request.parameters',
+        message: 'You need to send the requested parameters!'
+    }
+}
+  
+  function throwError(res, statusCode, customMessage) {
+    return res.status(statusCode).send({
+      ...statusCodetoObject[statusCode],
+      statusCode,
+      ...customMessage ? {
+        message: customMessage
+      } : {}
+    });
+  }
+
+async function getUser(token, ip, encrpt) {
+    const user = await (await fetch('https://discordapp.com/api/v6/users/@me', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${!encrpt ? AES.decrypt(token, ip).toString(enc.Utf8) : token}`
+      }
+    })).json();
+    return user;
+  }
 
 setInterval(() => {
     temp = uuid.v4().replace(/-/g, '');
