@@ -20,6 +20,7 @@ const { MongoClient, ObjectId } = mongodb;
 const { loadImage, registerFont, Canvas } = canvas;
 let { cloud, zone, name, username, password } = process.env.PORT ? process.env : denv.config().parsed;
 let temp = uuid.v4().replace(/-/g, '');
+const accountsSessions = {};
 
 setInterval(() => {
     temp = uuid.v4().replace(/-/g, '');
