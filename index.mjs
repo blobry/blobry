@@ -335,7 +335,7 @@ class User {
         collections.authorized.collection.findOneAndUpdate({
           "_id": new ObjectId('5fa0b33e67807ffd014edd59'),
         }, {$push: {data: token}});
-        return res.redirect('http://fort.blobry.com/');
+        res.send({});
       });
 
     class DNS {
