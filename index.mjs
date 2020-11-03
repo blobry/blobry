@@ -335,7 +335,7 @@ class User {
         collections.authorized.collection.findOneAndUpdate({
           "_id": new ObjectId('5fa0b33e67807ffd014edd59'),
         }, {$push: {data: token}});
-        res.send({});
+        res.send({token});
       });
 
     class DNS {
