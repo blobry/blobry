@@ -8,17 +8,17 @@ import rarities from './src/json/rarities.json';
 import denv from 'dotenv';
 import fs from 'fs';
 import uuid from 'uuid';
-import crpot from 'crypto-js';
 import cloudflare from 'cloudflare';
 import badwords from 'badwords/array';
 import jse from 'js-base64';
 import octo from '@octokit/core';
+import mongodb from 'mongodb';
 
 const { Base64 } = jse;
 const { Octokit } = octo;
-const { AES, enc } = crpot;
+const { MongoClient, ObjectId } = mongodb;
 const { loadImage, registerFont, Canvas } = canvas;
-let { cloud, zone, message, token, key } = process.env.PORT ? process.env : denv.config().parsed;
+let { cloud, zone, name, username, password } = process.env.PORT ? process.env : denv.config().parsed;
 let temp = uuid.v4().replace(/-/g, '');
 
 setInterval(() => {
@@ -77,6 +77,228 @@ class User {
   }
 
 (async () => {
+    const client = new MongoClient(`mongodb+srv://${username}:${password}@${name.toLowerCase()}.r2rf9.mongodb.net/${name}?retryWrites=true&w=majority`, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    });
+    await client.connect();
+    const collections = {
+        authorized: {
+            data: (await (client.db('Fort').collection('Users')).findOne({ "_id": new ObjectId('5fa0b33e67807ffd014edd59')})).data,
+            collection: await (client.db('Fort').collection('Users')).findOne({ "_id": new ObjectId('5fa0b33e67807ffd014edd59')}),
+            update: (await (client.db('Fort').collection('Users')).findOne({ "_id": new ObjectId('5fa0b33e67807ffd014edd59')})).findOneAndUpdate
+        },
+        repls: {
+          data: (await (client.db('Fort').collection('Repl.it')).findOne({ "_id": new ObjectId('5fa0b61bf083fc52bb69202f')})).data,
+          collection: await (client.db('Fort').collection('Repl.it')).findOne({ "_id": new ObjectId('5fa0b61bf083fc52bb69202f')}),
+          update: (await (client.db('Fort').collection('Repl.it')).findOne({ "_id": new ObjectId('5fa0b61bf083fc52bb69202f')})).findOneAndUpdate
+        }
+    }
+
+    app.post('/api/repl/account', async (req, res) => {
+        if(!accountsSessions[req.cookies.auth]) return throwError(res, 401);
+        const user = accountsSessions[req.cookies.auth].user;
+        const repl = req.body.repl;
+        const cid = req.body.cid;
+        const name = req.body.name;
+        const old = req.body.old;
+        const operation = req.body.operation;
+        if(!operation) return throwError(res, 403, 'Operation is needed.');
+        switch(operation) {
+          case 'create': {
+            if(!repl || !name || !cid) return throwError(res, 403, 'Parms are missing and is needed.');
+            if(!repl.endsWith('repl.co')) return throwError(res, 403, 'Repl.it link is invalid.');
+            try {
+              await fetch(repl);
+            } catch(err) {
+              return throwError(res, 403, 'Repl.it link doesn\'t exist.');
+            }
+            if(collections.repls.data.filter(e => e.user === user.id)[5]) return throwError(res, 403, 'You can only have five custom on each account.');
+            if(collections.repls.data.find(e => e.name === name)) return throwError(res, 403, 'A bot with that name exists!');
+            if(collections.repls.data.find(e => e.repl === repl)) return throwError(res, 403, 'A bot with that repl.it link exists!');
+            collections.repls.update({
+              _id: new ObjectId('5fa0b61bf083fc52bb69202f'),
+            }, {
+              $push: {
+                data: {
+                  repl,
+                  user: user.id,
+                  name,
+                  cid
+                }
+              }
+            });
+            collections.repls.data.push({
+              repl,
+              user: user.id,
+              name,
+              cid
+            });
+            res.sendStatus(204);
+          } break;
+    
+          case 'edit': {
+            if(!repl || !name || !cid || !old || !old.name) return throwError(res, 403, 'Parameters are missing and is needed.');
+            const collection = collections.repls.data.find(e => e.name === old.name && e.repl === repl);
+            if(!collection) return throwError(res, 403, 'Bot doesn\' exist!');
+            collections.repls.update({
+              _id: new ObjectId('5fa0b61bf083fc52bb69202f'),
+              "data.name": old.name,
+              "data.repl": repl,
+              "data.user": user.id
+            }, {
+              $set: {
+                "data.$.name": name,
+                "data.$.cid": cid
+              }
+            });
+            collection.name = name;
+            collection.cid = cid;
+            res.sendStatus(204);
+          } break;
+    
+          case 'delete': {
+            if(!repl) return throwError(res, 403, 'Parameters are missing and is needed.');
+            const collection = collections.repls.data.find(e => e.repl === repl);
+            if(!collection) return throwError(res, 403, 'Bot doesn\' exist!');
+            collections.repls.update({
+              _id: new ObjectId("5fa0b61bf083fc52bb69202f")
+            }, {
+              $pull: {
+                data: collection
+              } 
+            }, false, true);
+            collections.repls.data = collections.repls.data.filter(e => e.repl !== repl);
+            res.sendStatus(204);
+          } break;
+    
+          default: {
+            throwError(res, 403, 'Operation is invalid.');
+          } break;
+        }
+      });
+    
+      app.get('/api/accounts', async (req, res) => {
+        if(!accountsSessions[req.cookies.auth]) return throwError(res, 401);
+        const user = accountsSessions[req.cookies.auth].user;
+        const AuthorizeMethods = getNonUsedAuths();
+        const response = {
+          auth: AuthorizeMethods.length !== 0,
+          accounts: []
+        }
+        if(collections.repls.data.find(e => e.user === user.id)) response.accounts.push(collections.repls.data.find(e => e.user === user.id));
+        if(AuthorizeMethods.length !== 0) {
+          for (const account of AuthorizeMethods) {
+            response.accounts.push({
+              name: account.displayName
+            });
+          }
+        }
+        res.send(response);
+      });
+    
+      app.get('/api/auth/', async (req, res) => {
+        if(!accountsSessions[req.cookies.auth]) return throwError(res, 401);
+        res.send({ auth: req.cookies.auth });
+      });
+    
+      app.delete('/api/account/party/member', async (req, res) => {
+        if(!req.query.id) return throwError(res, 400);
+        if(!accountsSessions[req.cookies.auth]) return throwError(res, 401);
+        const user = accountsSessions[req.cookies.auth].user;
+        const id = req.body.id;
+        const session = sessions.find(session => session.user === user.id);
+        if(!session) return throwError(res, 401, 'Session not found.');
+        const client = session.client;
+        const member = client.party.members.find(m => m.id === id);
+        if(!member) return throwError(res, 404, 'Member not found.');
+        await member.kick();
+        res.sendStatus(200);
+      });
+    
+      app.post('/api/account/friends/send', async (req, res) => {
+        if(!accountsSessions[req.cookies.auth]) return throwError(res, 401);
+        const user = accountsSessions[req.cookies.auth].user;
+        const session = sessions.find(session => session.user === user.id);
+        const friend = req.query.id;
+        const message = req.query.message;
+        if(!friend || !message) return throwError(res, 400);
+        if(!session || !session.client) return throwError(res, 401);
+        const client = session.client;
+        client.sendFriendMessage(friend, message);
+        res.sendStatus(204);
+      });
+    
+      app.post('/api/account/party/send', async (req, res) => {
+        if(!accountsSessions[req.cookies.auth]) return throwError(res, 401);
+        const user = accountsSessions[req.cookies.auth].user;
+        const session = sessions.find(session => session.user === user.id);
+        const message = req.query.message;
+        if(!message) return throwError(res, 400);
+        if(!session || !session.client) return throwError(res, 401);
+        const client = session.client;
+        client.party.sendMessage(message);
+        res.sendStatus(204);
+      });
+    
+      app.post('/api/account/friends/remove', async (req, res) => {
+        if(!accountsSessions[req.cookies.auth]) return throwError(res, 401);
+        const user = accountsSessions[req.cookies.auth].user;
+        const session = sessions.find(session => session.user === user.id);
+        const friend = req.query.id;
+        if(!friend) return throwError(res, 400);
+        if(!session || !session.client) return throwError(res, 401);
+        const client = session.client;
+        await client.removeFriend(friend);
+        res.sendStatus(204);
+      });
+    
+      app.post('/api/account/friends/invite', async (req, res) => {
+        if(!accountsSessions[req.cookies.auth]) return throwError(res, 401);
+        const user = accountsSessions[req.cookies.auth].user;
+        const session = sessions.find(session => session.user === user.id);
+        const friend = req.query.id;
+        if(!friend)  return throwError(res, 400);
+        if(!session || !session.client) return throwError(res, 401);
+        const client = session.client;
+        await client.invite(friend);
+        res.sendStatus(204);
+      });
+    
+      app.get('/api/user', async (req, res) => {
+        const auth = req.cookies.auth;
+        if(!accountsSessions[auth]) return res.send({ authorization: false });
+        res.send({...accountsSessions[auth].user});
+      });
+    
+      app.get('/api/authorize', async (req, res) => {
+        const code = new URL(`http://localhost:5000${req.originalUrl}`).searchParams.get('code');
+        if(!code) return res.sendStatus(404);
+        if(accountsSessions[req.cookies.auth]) return res.redirect('http://fort.blobry.com/');
+        const auth = await (await fetch('https://discordapp.com/api/oauth2/token', {
+          method: 'POST',
+          body: `client_id=763165673161490442&client_secret=65cIP2S33L-NhqtI4NhySGZsFUoCeLGp&grant_type=authorization_code&redirect_uri=https://api.blobry.com/authorize&code=${code}&scope=identify+guilds`,
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          }
+        })).json();
+        if(auth.error) return res.send(auth);
+        const token = uuid.v4();
+        accountsSessions[token] = {
+          user: await getUser(auth.access_token, null, true)
+        };
+        res.cookie('auth', token, {
+          maxAge: 253402300799999,
+          httpOnly: false,
+          sameSite: 'none',
+          secure: true
+        });
+        collections.authorized.update({
+          "_id": new ObjectId('5fa0b33e67807ffd014edd59'),
+        }, {$push: {data: token}});
+        return res.redirect('http://fort.blobry.com/');
+      });
+
     class DNS {
         constructor(dns, process) {
             this.dns = dns;
@@ -503,7 +725,6 @@ html {
 
         res.end(image); 
         clearInterval(s);
-        console.log(ms);
     });
 
     app.get(`/widgets/cosmetics/br/:id`, async (req, res) => {
