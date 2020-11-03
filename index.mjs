@@ -135,8 +135,8 @@ class User {
     }
 
     app.post('/api/repl/account', async (req, res) => {
-        if(!accountsSessions[req.cookies.auth]) return throwError(res, 401);
-        const user = accountsSessions[req.cookies.auth].user;
+        if(!accountsSessions[req.query.auth]) return throwError(res, 401);
+        const user = accountsSessions[req.query.auth].user;
         const repl = req.body.repl;
         const cid = req.body.cid;
         const name = req.body.name;
@@ -218,9 +218,9 @@ class User {
       });
     
       app.get('/api/accounts', async (req, res) => {
-          console.log(req.cookies)
-        if(!accountsSessions[req.cookies.auth]) return throwError(res, 401);
-        const user = accountsSessions[req.cookies.auth].user;
+          console.log(req)
+        if(!accountsSessions[req.query.auth]) return throwError(res, 401);
+        const user = accountsSessions[req.query.auth].user;
         return res.send(collections.repls.data.filter(e => e.user === user.id));
         // const AuthorizeMethods = getNonUsedAuths();
         // const response = {
@@ -239,14 +239,14 @@ class User {
       });
     
       app.get('/api/auth/', async (req, res) => {
-        if(!accountsSessions[req.cookies.auth]) return throwError(res, 401);
-        res.send({ auth: req.cookies.auth });
+        if(!accountsSessions[req.query.auth]) return throwError(res, 401);
+        res.send({ auth: req.query.auth });
       });
     
       app.delete('/api/account/party/member', async (req, res) => {
         if(!req.query.id) return throwError(res, 400);
-        if(!accountsSessions[req.cookies.auth]) return throwError(res, 401);
-        const user = accountsSessions[req.cookies.auth].user;
+        if(!accountsSessions[req.query.auth]) return throwError(res, 401);
+        const user = accountsSessions[req.query.auth].user;
         const id = req.body.id;
         const session = sessions.find(session => session.user === user.id);
         if(!session) return throwError(res, 401, 'Session not found.');
@@ -258,8 +258,8 @@ class User {
       });
     
       app.post('/api/account/friends/send', async (req, res) => {
-        if(!accountsSessions[req.cookies.auth]) return throwError(res, 401);
-        const user = accountsSessions[req.cookies.auth].user;
+        if(!accountsSessions[req.query.auth]) return throwError(res, 401);
+        const user = accountsSessions[req.query.auth].user;
         const session = sessions.find(session => session.user === user.id);
         const friend = req.query.id;
         const message = req.query.message;
@@ -271,8 +271,8 @@ class User {
       });
     
       app.post('/api/account/party/send', async (req, res) => {
-        if(!accountsSessions[req.cookies.auth]) return throwError(res, 401);
-        const user = accountsSessions[req.cookies.auth].user;
+        if(!accountsSessions[req.query.auth]) return throwError(res, 401);
+        const user = accountsSessions[req.query.auth].user;
         const session = sessions.find(session => session.user === user.id);
         const message = req.query.message;
         if(!message) return throwError(res, 400);
@@ -283,8 +283,8 @@ class User {
       });
     
       app.post('/api/account/friends/remove', async (req, res) => {
-        if(!accountsSessions[req.cookies.auth]) return throwError(res, 401);
-        const user = accountsSessions[req.cookies.auth].user;
+        if(!accountsSessions[req.query.auth]) return throwError(res, 401);
+        const user = accountsSessions[req.query.auth].user;
         const session = sessions.find(session => session.user === user.id);
         const friend = req.query.id;
         if(!friend) return throwError(res, 400);
@@ -295,8 +295,8 @@ class User {
       });
     
       app.post('/api/account/friends/invite', async (req, res) => {
-        if(!accountsSessions[req.cookies.auth]) return throwError(res, 401);
-        const user = accountsSessions[req.cookies.auth].user;
+        if(!accountsSessions[req.query.auth]) return throwError(res, 401);
+        const user = accountsSessions[req.query.auth].user;
         const session = sessions.find(session => session.user === user.id);
         const friend = req.query.id;
         if(!friend)  return throwError(res, 400);
@@ -307,7 +307,7 @@ class User {
       });
     
       app.get('/api/user', async (req, res) => {
-        const auth = req.cookies.auth;
+        const auth = req.query.auth;
         if(!accountsSessions[auth]) return res.send({ authorization: false });
         res.send({...accountsSessions[auth].user});
       });
@@ -315,7 +315,7 @@ class User {
       app.get('/api/authorize', async (req, res) => {
         const code = new URL(`http://localhost:5000${req.originalUrl}`).searchParams.get('code');
         if(!code) return res.sendStatus(404);
-        if(accountsSessions[req.cookies.auth]) return res.redirect('http://fort.blobry.com/');
+        if(accountsSessions[req.query.auth]) return res.redirect('http://fort.blobry.com/');
         const auth = await (await fetch('https://discordapp.com/api/oauth2/token', {
           method: 'POST',
           body: `client_id=763165673161490442&client_secret=65cIP2S33L-NhqtI4NhySGZsFUoCeLGp&grant_type=authorization_code&redirect_uri=https://api.blobry.com/authorize&code=${code}&scope=identify+guilds`,
