@@ -64,6 +64,8 @@ body {
     -webkit-box-align: center;
     -webkit-box-pack: center;
     display: -webkit-box;
+    box-shadow: 0px 25px 2878px #7289da;
+    text-align: center;
 }
 
 .header > div:nth-of-type(1) {
@@ -126,47 +128,6 @@ body {
     }
 }
 
-@keyframes startup {
-    100% {
-        transform: translate(-118%, -50%);
-        opacity: 1;
-    }
-}
-
-.startup > div:nth-of-type(1) > div:nth-of-type(1) {
-    width: 100%;
-    align-items: center;
-    display: flex;
-    vertical-align: middle;
-    position: relative;
-}
-
-.startup > div:nth-of-type(1) > div:nth-of-type(1) > div {
-    border-radius: 80px;
-    height: 100vh;
-    width: 430px;
-    margin: 0;
-    position: absolute;
-    top: 50%;
-    animation: startup 500ms forwards;
-    transform: translate(-118%, -139%);
-}
-
-.startup > div:nth-of-type(1) > div:nth-of-type(1) > div > div {
-    position: absolute;
-    color: #7289DA;
-    font-weight: bold;
-    text-shadow: 0px 0px;
-    left: 68%;
-    white-space: pre;
-    top: 40%;
-}
-
-.startup > div:nth-of-type(1) > div:nth-of-type(1) > div > img {
-    width: 150px;
-    position: relative;
-}
-
 .projects {
     display: flex;
     height: 154px;
@@ -174,17 +135,24 @@ body {
     align-items: center;
     vertical-align: middle;
     justify-content: center;
+    position: relative;
+    top: 110px;
 }
 
 .projects > div {
     width: 210px;
     height: 136px;
-    border: 1px solid;
+    border: 1px solid rgb(42 45 47);
     border-radius: 5px;
     margin: 11px;
     text-align: center;
     cursor: pointer;
     transition: 0.5s;
+    align-items: center;
+    display: flex;
+    vertical-align: middle;
+    justify-content: center;
+    background: rgb(42 45 47);
 }
 
 .projects > div > img {
@@ -194,14 +162,13 @@ body {
 }
 
 .projects > div:hover {
-    box-shadow: 0px 0px 79px #2C2F33;
+    box-shadow: 0px 0px 79px rgb(42 45 47);
 }
 
 .projects > div > div:nth-of-type(1) {
-    overflow: hidden;
-    border-bottom: 1px solid;
-    position: relative;
-    height: 78px;
+    position: absolute;
+    top: 124px;
+    color: white;
 }
 
 .projects > div > div:nth-of-type(1) > img {
@@ -242,6 +209,29 @@ body {
     position: absolute;
     left: -870%;
     top: 151%;
+}
+
+.section-projects {
+    background: linear-gradient(45deg, rgb(42 45 47) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, rgb(114, 137, 218) 75%);
+}
+
+.section-projects > div:nth-of-type(1) {
+    font-size: 56px;
+    color: rgb(114, 137, 218);
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.projects > div > svg {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    left: 50%;
+    top: 50%;
+}
+
+.section-projects > div:nth-of-type(1) > div:nth-of-type(1) {
+    font-size: 23px;
 }
 
 ::-webkit-scrollbar {
