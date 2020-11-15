@@ -14,6 +14,8 @@ import badwords from 'badwords/array';
 import jse from 'js-base64';
 import octo from '@octokit/core';
 import mongodb from 'mongodb';
+import word from 'number-words';
+import hexyjs from 'hexyjs';
 
 const { Base64 } = jse;
 const { Octokit } = octo;
@@ -42,35 +44,35 @@ const statusCodetoObject = {
     }
 }
   
-  function throwError(res, statusCode, customMessage) {
-    return res.status(statusCode).send({
-      ...statusCodetoObject[statusCode],
-      statusCode,
-      ...customMessage ? {
-        message: customMessage
-      } : {}
-    });
-  }
+function throwError(res, statusCode, customMessage) {
+  return res.status(statusCode).send({
+    ...statusCodetoObject[statusCode],
+    statusCode,
+    ...customMessage ? {
+      message: customMessage
+    } : {}
+  });
+}
 
 async function getUser(token, ip, encrpt) {
-    const user = await (await fetch('https://discordapp.com/api/v6/users/@me', {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${!encrpt ? AES.decrypt(token, ip).toString(enc.Utf8) : token}`
-      }
-    })).json();
-    return user;
-  }
+  const user = await (await fetch('https://discordapp.com/api/v6/users/@me', {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${!encrpt ? AES.decrypt(token, ip).toString(enc.Utf8) : token}`
+    }
+  })).json();
+  return user;
+}
 
 setInterval(() => {
-    temp = uuid.v4().replace(/-/g, '');
-    console.log(`[DEBUG] http${process.env.PORT ? 's' : ''}://${process.env.PORT ? `blobry.herokuapp.com` : 'localhost:100'}/pages/${temp}/`);
+  temp = uuid.v4().replace(/-/g, '');
+  console.log(`[DEBUG] http${process.env.PORT ? 's' : ''}://${process.env.PORT ? `blobry.herokuapp.com` : 'localhost:100'}/pages/${temp}/`);
 }, 1000 * 150);
 
 console.log(`[DEBUG] http${process.env.PORT ? 's' : ''}://${process.env.PORT ? `blobry.herokuapp.com` : 'localhost:100'}/pages/${temp}/`);
 
 const cf = cloudflare({
-    token: cloud
+  token: cloud
 });
 
 const Buffers = [];
@@ -84,38 +86,40 @@ app.use('/static', express.static('root'));
 app.set('trust proxy', 1);
 app.use(cookieparser());
 app.use(cors({
-    origin: /blobry\.com$/,
+    origin: /$/, // /blobry\.com$/
     credentials: true
 }));
-app.use(bodyParser.json());
+app.use(bodyParser.json({
+  limit: '1000mb'
+}));
 
 const rgbToHex = (r, g, b) => {
     return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
 }
 
 class User {
-    constructor(token) {
-      this.token = token;
-    }
-  
-    async get() {
-      return await (await this.request('https://api.github.com/user')).json();
-    }
-  
-    async repos() {
-      return (await (await this.request('http://api.github.com/user/repos')).json()).filter(r => r.permissions.admin === true);
-    }
-  
-    async request(url, method="GET") {
-      return await fetch(url, {
-        method,
-        headers: {
-          Authorization: `bearer ${this.token}`,
-          "User-Agent": "Blobry API Pages"
-        }
-      });
-    }
+  constructor(token) {
+    this.token = token;
   }
+
+  async get() {
+    return await (await this.request('https://api.github.com/user')).json();
+  }
+
+  async repos() {
+    return (await (await this.request('http://api.github.com/user/repos')).json()).filter(r => r.permissions.admin === true);
+  }
+
+  async request(url, method="GET") {
+    return await fetch(url, {
+      method,
+      headers: {
+        Authorization: `bearer ${this.token}`,
+        "User-Agent": "Blobry API Pages"
+      }
+    });
+  }
+}
 
 (async () => {
     const client = new MongoClient(`mongodb+srv://${username}:${password}@${name.toLowerCase()}.r2rf9.mongodb.net/${name}?retryWrites=true&w=majority`, {
@@ -668,6 +672,33 @@ html {
 
         res.end(image);
     });
+    app.post('/api/do/the/thingy/boom', (req, res) => {
+      const string = JSON.parse(hexyjs.hexToStr(hexyjs.hexToStr(req.body.data).replace(/\[/g, '').replace(/\]/g, '').replace(/"/g, '')))[0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0];
+      res.send(string);
+    });
+
+
+    app.get('/api/do/the/thingy/boom/boom', (req, res) => {
+      const string = req.query.data;
+
+      let codes = [];
+
+      let { length } = string;
+      while (length--) {
+          const chars = hexyjs.strToHex(JSON.stringify([[[[[[[[[[[[[[[[[[[[[[JSON.stringify([...String(string[length].split('').reverse().map(a => {
+            if(a === '') return;
+            return hexyjs.strToHex(JSON.stringify([[[[[[[[hexyjs.strToHex(JSON.stringify([[[[hexyjs.strToHex(word.convert(a.charCodeAt(0)))]]]]))]]]]]]]]));
+          }).reverse()[0]).split("").reverse().map(e => [[[[[[Number(e)]]]]]])])].map(e => e.split('[')).map(e => e.map(e => [[[[e.split(']')]]]]).map(e => [[[[[[e]]]]]]))]]]]]]]]]]]]]]]]]]]]]));
+          codes.push(hexyjs.strToHex(JSON.stringify([[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[chars]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]])));
+          // codes.push([]);
+          // while (charlength--) {
+          //     codes[codes.length - 1].push([Number(chars[charlength])]);
+          // }
+          // codes[codes.length - 1] = codes[codes.length - 1].reverse();
+          // codes = codes.reverse();
+      };
+      res.send(codes);
+    })
 
     app.get('/embed', (req, res) => {
         res.send(`<!DOCTYPE html><html prefix="og: http://ogp.me/ns#"><head>

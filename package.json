@@ -31,9 +31,11 @@
     "express": "^4.17.1",
     "gifencoder": "^2.0.1",
     "gifshot": "^0.4.5",
+    "hexyjs": "^2.1.4",
     "js-base64": "^3.5.2",
     "mongodb": "^3.6.2",
     "node-fetch": "^2.6.1",
+    "number-words": "^1.1.1",
     "uuid": "^8.3.1"
   }
 }
