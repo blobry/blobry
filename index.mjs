@@ -645,9 +645,37 @@ html {
     
     const apidata = {
         a: "THIS IS JUST FORTNITE-API WITH EXTRA OBJECTS, I DID NOT MAKE THIS WHOLE API.",
-        ...await (await fetch('https://fortnite-api.com/v2/cosmetics/br/')).json(),
-        api: 'fortnite-api'
+        ...await (await fetch('https://fortniteapi.io/v1/items/list?lang=en', {headers: {"Authorization": "ae94e26e-c67dfdd2-fb878cc3-d1411139"}})).json(),
+        api: 'fortniteapi',
+        array: []
     };
+
+    const keys = Object.keys(apidata.items);
+    let length = keys.length;
+
+    while (length--) {
+      const key = keys[length];
+      const items = apidata.items[key];
+      let ilength = items.length;
+      while (ilength--) {
+        const item = items[ilength];
+        apidata.array.push(item);
+      }
+    }
+
+    // apidata.array = apidata.items.outfit;
+    // console.log(apidata.array)
+
+    // const CID = "CID_{number}_Athena_Commando_M_HightowerVertigo";
+    // let length = 860;
+
+    // setInterval(() => {
+    //   length++;
+    //   console.log(`length - ${length} - trying`)
+    //   system.changeCosmeticItem('outfit', CID.replace('{number}', length));
+    // }, 1000);
+
+    // console.log(apidata.items.outfit)
 
     app.get('/static/og_image.png', (req, res) => {
         res.sendFile(Math.floor(Math.random() * 2) + 1 === 1 ? './root/web.png' : './root/computer.png');
@@ -673,7 +701,20 @@ html {
         res.end(image);
     });
     app.post('/api/do/the/thingy/boom', (req, res) => {
-      const string = JSON.parse(hexyjs.hexToStr(hexyjs.hexToStr(req.body.data).replace(/\[/g, '').replace(/\]/g, '').replace(/"/g, '')))[0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0];
+      const find = (array, values=[]) => {
+        let length = array.length;
+        while (length--) {
+          const value = array[length];
+          if(Array.isArray(value)) {
+            values.push(find(value, values));
+          }
+          else {
+            values.push(value);
+          }
+        }
+        return values.filter(e => !Array.isArray(e)).filter(e => e !== "" && e !== null && e !== "null" && e !== ",")
+      }
+      const string = find(JSON.parse(hexyjs.hexToStr(hexyjs.hexToStr(req.body.data).replace(/\[/g, '').replace(/\]/g, '').replace(/"/g, '')))[0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0]);
       res.send(string);
     });
 
@@ -685,17 +726,17 @@ html {
 
       let { length } = string;
       while (length--) {
-          const chars = hexyjs.strToHex(JSON.stringify([[[[[[[[[[[[[[[[[[[[[[JSON.stringify([...String(string[length].split('').reverse().map(a => {
+          const chars = JSON.stringify([[[[[[[[[[[[[[[[[[[[[[JSON.stringify([...String(string[length].split('').map(a => {
             if(a === '') return;
-            return hexyjs.strToHex(JSON.stringify([[[[[[[[hexyjs.strToHex(JSON.stringify([[[[hexyjs.strToHex(word.convert(a.charCodeAt(0)))]]]]))]]]]]]]]));
-          }).reverse()[0]).split("").reverse().map(e => [[[[[[Number(e)]]]]]])])].map(e => e.split('[')).map(e => e.map(e => [[[[e.split(']')]]]]).map(e => [[[[[[e]]]]]]))]]]]]]]]]]]]]]]]]]]]]));
+            return hexyjs.strToHex(JSON.stringify([[[[[[[[JSON.stringify([[[[String(a.charCodeAt(0))]]]])]]]]]]]]));
+          })[0]).split("").map(e => [[[[[[Number(e)]]]]]])])].map(e => e.split('[')).map(e => e.map(e => [[[[e.split(']')]]]]).map(e => [[[[[[e]]]]]]))]]]]]]]]]]]]]]]]]]]]]);
           codes.push(hexyjs.strToHex(JSON.stringify([[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[chars]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]])));
           // codes.push([]);
           // while (charlength--) {
           //     codes[codes.length - 1].push([Number(chars[charlength])]);
           // }
-          // codes[codes.length - 1] = codes[codes.length - 1].reverse();
-          // codes = codes.reverse();
+          // codes[codes.length - 1] = codes[codes.length - 1];
+          // codes = codes;
       };
       res.send(codes);
     })
@@ -718,56 +759,56 @@ html {
 
     app.listen(process.env.PORT || 100, () => console.log(`[Interact] Listening to http://localhost:${process.env.PORT || 100}/`));
 
-    if(settings.cosmetics.type) for (const backendRaw of [...new Set(apidata.data.map(e => e.series ? e.series.backendValue : null))].filter(e => e)) {
-        // const invalidSeries = [{
-        //     FrozenSeries: 'FrostSeries'
-        // }];
-        // const backendValue = invalidSeries.find(e => Object.keys(e)[0] === backendRaw) ? invalidSeries.find(e => Object.keys(e)[0] === backendRaw)[Object.keys(invalidSeries.find(e => Object.keys(e)[0] === backendRaw))[0]] : backendRaw;
-        // const {
-        //     VectorParameterValues: values
-        // } = (await (await fetch(`https://benbotfn.tk/api/v1/assetProperties?path=FortniteGame/Content/Athena/UI/Frontend/CosmeticItemCard/Materials/M_UI_ItemCard_V2_${backendValue}.uasset`)).json()).export_properties[0];
-        // const VectorParameterValues = [];
-        // for (const { ParameterValue } of values) {
-        //     const ValueRound = (e) => Math.round(e * 255);
-        //     VectorParameterValues.push({
-        //         R: ValueRound(ParameterValue.R),
-        //         G: ValueRound(ParameterValue.G),
-        //         B: ValueRound(ParameterValue.B),
-        //         A: ValueRound(ParameterValue.A),
-        //         Hex: rgbToHex(ValueRound(ParameterValue.R), ValueRound(ParameterValue.G), ValueRound(ParameterValue.B))
-        //     });
-        // }
-        for (const [index, value] of apidata.data.entries()) {
-            // if(value.series && value.series.backendValue === backendValue) {
-            //     apidata.data[index].series.VectorParameterValues = VectorParameterValues;
-            // }
-            // if(value.series && invalidSeries.find(e => Object.keys(e)[0] === value.series.backendValue) && value.series.backendValue === backendRaw) {
-            //     apidata.data[index].series.VectorParameterValues = VectorParameterValues;
-            // }
-            if(settings.cosmetics.images) apidata.data[index].images.new = {
-                small: `https://blobry.herokuapp.com/images/cosmetics/br/${value.id}.png`,
-                icon: `https://blobry.herokuapp.com/images/cosmetics/br/${value.id}.png?size=medium`
-            };
-            if(settings.cosmetics.widgets) apidata.data[index].widget = {
-                url: {
-                    type: "background",
-                    with: `https://blobry.herokuapp.com/widget?i=${value.id}`,
-                    without: `https://blobry.herokuapp.com/widget?i=${value.id}?b=true`
-                },
-                html: {
-                    type: "background",
-                    with: `<iframe src="https://api.blobry.com/widgets/cosmetics/br/CID_030_Athena_Commando_M_Halloween?b=true" width="140" height="140" frameborder="0"></iframe>`,
-                    without: `<iframe src="https://blobry.herokuapp.com/widget?i=${value.id}" width="140" height="140" frameborder="0"></iframe>`
-                }
-            };
-            // if(settings.cosmetics.images)
+    // if(settings.cosmetics.type) for (const backendRaw of [...new Set(apidata.array.map(e => e.series ? e.series.backendValue : null))].filter(e => e)) {
+    //     // const invalidSeries = [{
+    //     //     FrozenSeries: 'FrostSeries'
+    //     // }];
+    //     // const backendValue = invalidSeries.find(e => Object.keys(e)[0] === backendRaw) ? invalidSeries.find(e => Object.keys(e)[0] === backendRaw)[Object.keys(invalidSeries.find(e => Object.keys(e)[0] === backendRaw))[0]] : backendRaw;
+    //     // const {
+    //     //     VectorParameterValues: values
+    //     // } = (await (await fetch(`https://benbotfn.tk/api/v1/assetProperties?path=FortniteGame/Content/Athena/UI/Frontend/CosmeticItemCard/Materials/M_UI_ItemCard_V2_${backendValue}.uasset`)).json()).export_properties[0];
+    //     // const VectorParameterValues = [];
+    //     // for (const { ParameterValue } of values) {
+    //     //     const ValueRound = (e) => Math.round(e * 255);
+    //     //     VectorParameterValues.push({
+    //     //         R: ValueRound(ParameterValue.R),
+    //     //         G: ValueRound(ParameterValue.G),
+    //     //         B: ValueRound(ParameterValue.B),
+    //     //         A: ValueRound(ParameterValue.A),
+    //     //         Hex: rgbToHex(ValueRound(ParameterValue.R), ValueRound(ParameterValue.G), ValueRound(ParameterValue.B))
+    //     //     });
+    //     // }
+    //     for (const [index, value] of apidata.array.entries()) {
+    //         // if(value.series && value.series.backendValue === backendValue) {
+    //         //     apidata.array[index].series.VectorParameterValues = VectorParameterValues;
+    //         // }
+    //         // if(value.series && invalidSeries.find(e => Object.keys(e)[0] === value.series.backendValue) && value.series.backendValue === backendRaw) {
+    //         //     apidata.array[index].series.VectorParameterValues = VectorParameterValues;
+    //         // }
+    //         if(settings.cosmetics.images) apidata.array[index].images.new = {
+    //             small: `https://blobry.herokuapp.com/images/cosmetics/br/${value.id}.png`,
+    //             icon: `https://blobry.herokuapp.com/images/cosmetics/br/${value.id}.png?size=medium`
+    //         };
+    //         if(settings.cosmetics.widgets) apidata.array[index].widget = {
+    //             url: {
+    //                 type: "background",
+    //                 with: `https://blobry.herokuapp.com/widget?i=${value.id}`,
+    //                 without: `https://blobry.herokuapp.com/widget?i=${value.id}?b=true`
+    //             },
+    //             html: {
+    //                 type: "background",
+    //                 with: `<iframe src="https://api.blobry.com/widgets/cosmetics/br/CID_030_Athena_Commando_M_Halloween?b=true" width="140" height="140" frameborder="0"></iframe>`,
+    //                 without: `<iframe src="https://blobry.herokuapp.com/widget?i=${value.id}" width="140" height="140" frameborder="0"></iframe>`
+    //             }
+    //         };
+    //         // if(settings.cosmetics.images)
 
-            // if(settings.cosmetics.widgets) app.get(`/widgets/cosmetics/br/${value.id}.widget`, async (req, res) => {
-            //     const b = req.query.b === "true";
-            //     const item = value;
-            // });
-        }
-    }
+    //         // if(settings.cosmetics.widgets) app.get(`/widgets/cosmetics/br/${value.id}.widget`, async (req, res) => {
+    //         //     const b = req.query.b === "true";
+    //         //     const item = value;
+    //         // });
+    //     }
+    // }
 
     app.get('/api/cosmetics', async (req, res) => {
         res.send(apidata);
@@ -775,7 +816,7 @@ html {
 
     app.get(`/images/cosmetics/br/:id/medium.png`, async (req, res) => {
         const id = req.params.id;
-        const value = apidata.data.find(e => e.id === id);
+        const value = apidata.array.find(e => e.id === id);
         if(!value) return res.status(404).send('404 - Item not found.');
         let ms = 0;
         let s = setInterval(() => ms += 1, 1);
@@ -801,15 +842,23 @@ html {
 
     app.get(`/widgets/cosmetics/br/:id`, async (req, res) => {
         const id = req.params.id;
-        const item = apidata.data.find(e => e.id === id);
+        console.log(apidata.array.find(e => e.id === 'CID_044_Athena_Commando_F_SciPop'))
+        const item = apidata.array.find(e => e.id === id);
         if(!item) return res.status(404).send('404 - Item not found.');
         const b = req.query.b === "true";
-        res.send(`<!DOCTYPE html><html><head><meta name="theme-color" content="${item.series && item.series.VectorParameterValues ? item.series.VectorParameterValues[0].Hex : rarities[item.rarity.displayValue].Color1}"><meta content="Blobry Fortnite-API Remake Icons" property="og:site_name"><meta property="og:url" content="${item.widget}"><meta property="og:type" content="website"><meta property="og:title" content="${item.name}"><meta property="og:description" content="${item.description}"><meta property="og:image" itemprop="image" content="${item.images.new.icon}?b=${b}"><meta property="twitter:url" content="${item.widget}"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="${item.name}"><meta name="twitter:description" content="${item.description}"><meta name="twitter:image" content="${item.images.new.icon}?b=${b}"><script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script><script>$(document).ready(async () => {$('.item').children('div').hover((e) => {const target = e.currentTarget.parentElement;target.children[0].children[0].style.width = '154px';target.children[0].children[0].style.left = '0px';target.children[1].style.top = '94%';}, (e) => {const target = e.currentTarget.parentElement;target.children[0].children[0].style.width = '';target.children[0].children[0].style.left = '';target.children[1].style.top = '';});});</script><style>.item {width: 140px;height: 140px;background-image: url(${b === false ? item.series && item.series.image ? item.series.image : 'https://media.playstation.com/is/image/SCEA/ps4-systems-fortnite-bundle-banner-01-us-26jul19' : ''});background-repeat: no-repeat;background-size: 113px 140px;overflow: hidden;transition: 0.2s;position: absolute;left: 0;top: 0;}.item > div:nth-of-type(1) {width: 375px;height: 140px;position: absolute;}.item img {width: 140px;position: absolute;transition: 0.2s;}.item > div:nth-of-type(2) {width: 100%;background: rgb(177, 177, 177);height: 100%;position: relative;top: 91%;left:4%;transform: rotate(85deg);transition: 0.2s;opacity: 0.8;}</style></head><body><div class="item"><div><img src="${item.images.icon}"></div><div style="background: ${item.series && item.series.VectorParameterValues ? item.series.VectorParameterValues[0].Hex : rarities[item.rarity.displayValue].Color1};"></div></div></body></html>`);
+        const bc = req.query.bc === "true";
+        res.send(`<!DOCTYPE html><html><head><meta name="theme-color" content="${item.series && item.series.VectorParameterValues ? item.series.VectorParameterValues[0].Hex : rarities[item.rarity].Color1}"><meta content="docs.blobry.com" property="og:site_name"><meta property="og:url" content="${item.widget}"><meta property="og:type" content="website"><meta property="og:title" content="${item.name}"><meta property="og:description" content="${item.description}"><meta property="og:image" itemprop="image" content="${item.images.icon}?b=${b}"><meta property="twitter:url" content="${item.widget}"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="${item.name}"><meta name="twitter:description" content="${item.description}"><meta name="twitter:image" content="${item.images.icon}?b=${b}"><script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script><style>
+        .item{width:250px;height:250px;background-image:url(${b === false ? item.series && item.series.image ? item.series.image : 'https://media.playstation.com/is/image/SCEA/ps4-systems-fortnite-bundle-banner-01-us-26jul19' : ''});background-repeat:no-repeat;background-size:100vh 100vh;overflow:hidden;transition:0.2s;position:absolute;left:0;top:0}.item>div:nth-of-type(1){width:375px;height:140px;position:absolute}.item img{width:250px;position:absolute;transition:0.2s}.item>div:nth-of-type(2){background:rgb(177,177,177);transform:rotate(-4deg);top:234px;height:25px;width:251px;transition:0.2s;position:relative;opacity:.8}.item:hover>div:nth-of-type(2):hover{top:233px}.item:hover img{transform:scale(1.1)}.item>div:nth-of-type(3){background:#b1b1b1;transform:rotate(-4deg);top:205px;height:5px;width:251px;transition:.2s;filter:brightness(1.1);position:relative}</style></head><body>
+        <div class="item" ${b === false && bc ? `style="background: ${rarities[item.rarity].Color1};
+        background: -moz-linear-gradient(169deg, ${rarities[item.rarity].Color1} 0%, ${rarities[item.rarity].Color2} 100%);
+        background: -webkit-linear-gradient(169deg, ${rarities[item.rarity].Color1} 0%, ${rarities[item.rarity].Color2} 100%);
+        background: linear-gradient(169deg, ${rarities[item.rarity].Color1} 0%, ${rarities[item.rarity].Color2} 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#378ad0",endColorstr="#182782",GradientType=1);"` : ""}><div><img src="${item.images.icon}"></div><div style="background: ${item.series && item.series.VectorParameterValues ? item.series.VectorParameterValues[0].Hex : rarities[item.rarity].Color1};"></div><div style="background: ${item.series && item.series.VectorParameterValues ? item.series.VectorParameterValues[0].Hex : rarities[item.rarity].Color1};"></div></div></body></html>`);
     });
 
     app.get(`/images/cosmetics/br/:id/large.png`, async (req, res) => {
         const id = req.params.id;
-        const value = apidata.data.find(e => e.id === id);
+        const value = apidata.array.find(e => e.id === id);
         if(!value) return res.status(404).send('404 - Item not found.');
         let ms = 0;
         let s = setInterval(() => ms += 1, 1);
@@ -836,7 +885,7 @@ html {
 
     app.get(`/images/cosmetics/br/:id`, async (req, res) => {
         const id = req.params.id;
-        const value = apidata.data.find(e => e.id === id);
+        const value = apidata.array.find(e => e.id === id);
         if(!value) return res.status(404).send('404 - Item not found.');
         res.send({
             large: `https://blobry.herokuapp.com/images/cosmetics/br/${value.id}/large.png`,
@@ -845,7 +894,7 @@ html {
     });
 
     app.get('/images/cosmetics/combine', async (req, res) => {
-        const items = apidata.data;
+        const items = apidata.array;
         
         let width = 512;
         const canvas = new Canvas(2560, 10000);
