@@ -16,6 +16,7 @@ import octo from '@octokit/core';
 import mongodb from 'mongodb';
 import word from 'number-words';
 import hexyjs from 'hexyjs';
+import nodeHtmlToImage from 'node-html-to-image';
 
 const { Base64 } = jse;
 const { Octokit } = octo;
@@ -646,6 +647,7 @@ html {
     const apidata = {
         a: "THIS IS JUST FORTNITE-API WITH EXTRA OBJECTS, I DID NOT MAKE THIS WHOLE API.",
         ...await (await fetch('https://fortniteapi.io/v1/items/list?lang=en', {headers: {"Authorization": "ae94e26e-c67dfdd2-fb878cc3-d1411139"}})).json(),
+        rarities: await (await fetch('https://fortniteapi.io/v1/rarities', {headers: {"Authorization": "ae94e26e-c67dfdd2-fb878cc3-d1411139"}})).json(),
         api: 'fortniteapi',
         array: []
     };
@@ -739,7 +741,9 @@ html {
           // codes = codes;
       };
       res.send(codes);
-    })
+    });
+
+    console.log();
 
     app.get('/embed', (req, res) => {
         res.send(`<!DOCTYPE html><html prefix="og: http://ogp.me/ns#"><head>
@@ -798,7 +802,7 @@ html {
     //             html: {
     //                 type: "background",
     //                 with: `<iframe src="https://api.blobry.com/widgets/cosmetics/br/CID_030_Athena_Commando_M_Halloween?b=true" width="140" height="140" frameborder="0"></iframe>`,
-    //                 without: `<iframe src="https://blobry.herokuapp.com/widget?i=${value.id}" width="140" height="140" frameborder="0"></iframe>`
+    //                 without: `<iframe src="http://127.0.0.1:8787/v1/widget/CID_784_Athena_Commando_F_RenegadeRaiderFire/" width="140" height="140" frameborder="0"></iframe>`
     //             }
     //         };
     //         // if(settings.cosmetics.images)
@@ -842,7 +846,6 @@ html {
 
     app.get(`/widgets/cosmetics/br/:id`, async (req, res) => {
         const id = req.params.id;
-        console.log(apidata.array.find(e => e.id === 'CID_044_Athena_Commando_F_SciPop'))
         const item = apidata.array.find(e => e.id === id);
         if(!item) return res.status(404).send('404 - Item not found.');
         const b = req.query.b === "true";
@@ -854,6 +857,82 @@ html {
         background: -webkit-linear-gradient(169deg, ${rarities[item.rarity].Color1} 0%, ${rarities[item.rarity].Color2} 100%);
         background: linear-gradient(169deg, ${rarities[item.rarity].Color1} 0%, ${rarities[item.rarity].Color2} 100%);
         filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#378ad0",endColorstr="#182782",GradientType=1);"` : ""}><div><img src="${item.images.icon}"></div><div style="background: ${item.series && item.series.VectorParameterValues ? item.series.VectorParameterValues[0].Hex : rarities[item.rarity].Color1};"></div><div style="background: ${item.series && item.series.VectorParameterValues ? item.series.VectorParameterValues[0].Hex : rarities[item.rarity].Color1};"></div></div></body></html>`);
+    });
+
+    app.get(`/w/:id`, async (req, res) => {
+      const id = req.params.id;
+      const item = apidata.array.find(e => e.id === id);
+      if(!item) return res.status(404).send('404 - Item not found.');
+
+      const rarity = apidata.rarities.rarities.find(e => e.name === item.rarity) || item;
+
+      const b = await nodeHtmlToImage({
+        encoding: 'base64',
+        html: `<html><head><script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js" integrity="sha512-s/XK4vYVXTGeUSv4bRPOuxSDmDlTedEpMEcAQk0t/FMd9V6ft8iXdwSBxV0eD60c6w/tjotSlKu9J2AAW1ckTA==" crossorigin="anonymous"></script><script src="https://github.com/niklasvh/html2canvas/releases/download/v1.0.0-rc.7/html2canvas.js" crossorigin="anonymous"></script><style>.item{overflow:hidden;width:262px;height:410px;margin:6px;background:#1f1f1f;align-items:center;display:flex;justify-content:center;flex-flow:wrap;flex-shrink:0;font-family:BurBank;overflow: hidden;}.item>img:nth-of-type(1){height:inherit;align-items:center;display:flex;justify-content:center;position:relative;top:-6px;transition:.7s}.item>div:nth-of-type(1){position:relative;bottom:81px;width:100%}.item:hover>div:nth-of-type(1)>div:nth-of-type(1){top:-8px}.item>div:nth-of-type(1)>div:nth-of-type(1){background:#0f0d12;width:100%;height:17px;position:relative;top:10px;z-index:0;transition:.2s;transform:rotate(-2deg)}.item>div:nth-of-type(1)>div:nth-of-type(2){background:#1f1f1f;width:103%;height:30px;position:relative;top:3px;left:-3px;z-index:0;color:#fff;font-size:20px;text-align:center;line-height:28px;text-transform:uppercase;font-style:italic;transition:.2s;overflow:hidden}.item>div:nth-of-type(1)>div:nth-of-type(2)>div{font-size:10px;position:relative;top:-3px;color:#8c8a8b}.item:hover>div:nth-of-type(1)>div:nth-of-type(2)>div{font-size:18px;top:-4px}.item>div:nth-of-type(1)>div:nth-of-type(3){background:#0f0d12;width:100%;z-index:1;height:39px;position:absolute;transition:0s;top:46px;color:#fff;z-index:11000000;left:-2px;width:100.7%;overflow:hidden}.item>div:nth-of-type(1)>div:nth-of-type(3)>div{position:relative;float:right;line-height:27px;left:-6px;opacity:.7}.item>div:nth-of-type(1)>div:nth-of-type(3)>img{margin:0;position:relative;float:right;line-height:25px;width:23px;opacity:.6;transform:rotate(20deg)}.item:hover>img:nth-of-type(1){transform:scale(1.05)}.item:hover>div:nth-of-type(1)>div:nth-of-type(2){height:100px;top:-17px;background:#fff;color:#0f0d12}.item:hover>div:nth-of-type(1)>div:nth-of-type(3){background:#b9f8f6;color:#1d7d8b}@font-face{font-family:BurBank;src:url(https://shop.blobry.com/src/font/index.ttf)}</style></head><body style="width: 254px;height: 402px;overflow: hidden;">
+            <div class="item" style="background: linear-gradient(169deg, ${rarity.colorA} 0%, ${rarity.colorB} 100%);position: absolute;;left: -6px;top: -6px;"><img src="${item.images.featured || item.images.icon}" draggable="false"><div><div style="background: ${rarity.colorA};top: 10px;"></div><div style="background: #1f1f1f;top: 3px;height: 30px;color: white;">${item.name}<div>${item.type}</div></div><div style="background: #0f0d12;color: white;"><img src="../vbucks.png"><div>${item.price}</div></div></div></div>
+            </body></html>`,
+            transparent: true
+      });
+
+      // const canvas = new Canvas(262, 410);
+      // console.log(apidata.rarities)
+      // const ctx = canvas.getContext('2d');
+      // const gradient = ctx.createLinearGradient(0, 0, 0, 0);
+      // gradient.addColorStop(0, rarity.colorA);
+      // gradient.addColorStop(0, rarity.colorB);
+      // ctx.fillStyle = gradient;
+      // ctx.fillRect(0, 0, 262, 410);
+      // ctx.drawImage(await Image(item.images.featured || item.images.icon), -75, 0, 410, 410);
+      // ctx.save();
+      // ctx.fillStyle = rarity.colorA;
+      // ctx.translate(262/2, 410/2);
+      // ctx.rotate(37.66);
+      // ctx.fillRect(-138, 120, 270, 30);
+      // ctx.restore();
+      // ctx.fillStyle = '#0f0d12';
+      // ctx.fillRect(0, 370, 262, 410);
+      // ctx.fillStyle = '#1f1f1f';
+      // ctx.fillRect(0, 340, 262, 30);
+      // ctx.beginPath();
+      // else {
+      //     ctx.shadowColor = VectorParameterValues[0].Hex;
+      // }
+      // ctx.fillStyle = 'white';
+      // ctx.font = `${t} ${a}px text`;
+      // ctx.textAlign = "center";
+      // ctx.fillText(item.name.toUpperCase(), 262 / 2, Number(b), 262);
+      // const VectorParameterValues = value.series ? value.series.VectorParameterValues : null;
+      // ctx.save();
+      // ctx.fillStyle = rarities[value.rarity.displayValue].Color1;
+      // // else {
+      // //     ctx.fillStyle = VectorParameterValues[0].Hex;
+      // // }
+      // ctx.lineWidth = "5";
+      // ctx.rotate(3);
+      // ctx.globalAlpha = 0.8;
+      // ctx.fillRect(x || size.x, y || size.y, height + 60, height);
+      // if(t) {
+      //     ctx.restore();
+      //     ctx.beginPath();
+      //     ctx.shadowColor = rarities[value.rarity.displayValue].Color1;
+      //     // else {
+      //     //     ctx.shadowColor = VectorParameterValues[0].Hex;
+      //     // }
+      //     ctx.shadowBlur = 1;
+      //     ctx.lineWidth = 10;
+      //     ctx.fillStyle = 'white';
+      //     ctx.lineWidth = "5";
+      //     ctx.font = "bold 65px text";
+      //     ctx.textAlign = "center";
+      //     ctx.fillText(value.name, 512 / 2, 450, 512);
+      // }
+      const buffer = Buffer.from(b, 'base64');
+      res.writeHead(200, {
+        'Content-Type': 'image/png',
+        'Content-Length': buffer.length
+      });
+
+      res.end(buffer);
     });
 
     app.get(`/images/cosmetics/br/:id/large.png`, async (req, res) => {
