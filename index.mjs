@@ -859,26 +859,34 @@ html {
     app.get(`/w/:id`, async (req, res) => {
       const id = req.params.id;
       const item = apidata.array.find(e => e.id === id);
+      const t = req.query.t;
+      const a = req.query.a;
+      const b = req.query.b;
       if(!item) return res.status(404).send('404 - Item not found.');
-      const canvas = new Canvas(262, 410);
+      const canvas = new Canvas(524, 820);
       const ctx = canvas.getContext('2d');
       const rarity = apidata.rarities.rarities.find(e => e.name === item.rarity) || item;
       const gradient = ctx.createLinearGradient(0, 0, 0, 0);
       gradient.addColorStop(0, rarity.colorA);
       gradient.addColorStop(0, rarity.colorB);
       ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, 262, 410);
-      ctx.drawImage(await Image(item.images.featured || item.images.icon), -75, 0, 410, 410);
+      ctx.fillRect(0, 0, 524, 820);
+      ctx.drawImage(await Image(item.images.featured || item.images.icon), -75, 0, 680, 820);
       ctx.save();
       ctx.fillStyle = rarity.colorA;
-      ctx.translate(262/2, 410/2);
+      ctx.translate(524/2, 820/2);
       ctx.rotate(37.66);
-      ctx.fillRect(-138, 120, 270, 30);
+      ctx.fillRect(-272, 270, 524, 30);
       ctx.restore();
-      ctx.fillStyle = '#0f0d12';
-      ctx.fillRect(0, 370, 262, 410);
       ctx.fillStyle = '#1f1f1f';
-      ctx.fillRect(0, 340, 262, 30);
+      ctx.fillRect(0, 700, 524, 820);
+      ctx.fillStyle = '#0f0d12';
+      ctx.fillRect(0, 750, 524, 820);
+
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = `normal 50px text`;
+      ctx.textAlign = 'center';
+      ctx.fillText(item.name, canvas.width / 2, 742);
 
       const buffer = Buffer.from(canvas.toDataURL().split(",")[1], 'base64');
       res.writeHead(200, {
