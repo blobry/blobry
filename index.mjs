@@ -326,7 +326,7 @@ class User {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
           }
-        })).json();
+        })).text();
         if(auth.error) return res.send(auth);
         const token = uuid.v4();
         accountsSessions[token] = {
@@ -643,26 +643,26 @@ html {
         }
     };
     
-    const apidata = {
-        a: "THIS IS JUST FORTNITE-API WITH EXTRA OBJECTS, I DID NOT MAKE THIS WHOLE API.",
-        ...await (await fetch('https://fortniteapi.io/v1/items/list?lang=en', {headers: {"Authorization": "ae94e26e-c67dfdd2-fb878cc3-d1411139"}})).json(),
-        rarities: await (await fetch('https://fortniteapi.io/v1/rarities', {headers: {"Authorization": "ae94e26e-c67dfdd2-fb878cc3-d1411139"}})).json(),
-        api: 'fortniteapi',
-        array: []
-    };
+    // const apidata = {
+    //     a: "THIS IS JUST FORTNITE-API WITH EXTRA OBJECTS, I DID NOT MAKE THIS WHOLE API.",
+    //     ...await (await fetch('https://fortniteapi.io/v1/items/list?lang=en', {headers: {"Authorization": "ae94e26e-c67dfdd2-fb878cc3-d1411139"}})).json(),
+    //     rarities: await (await fetch('https://fortniteapi.io/v1/rarities', {headers: {"Authorization": "ae94e26e-c67dfdd2-fb878cc3-d1411139"}})).json(),
+    //     api: 'fortniteapi',
+    //     array: []
+    // };
 
-    const keys = Object.keys(apidata.items);
-    let length = keys.length;
+    // const keys = Object.keys(apidata.items);
+    // let length = keys.length;
 
-    while (length--) {
-      const key = keys[length];
-      const items = apidata.items[key];
-      let ilength = items.length;
-      while (ilength--) {
-        const item = items[ilength];
-        apidata.array.push(item);
-      }
-    }
+    // while (length--) {
+    //   const key = keys[length];
+    //   const items = apidata.items[key];
+    //   let ilength = items.length;
+    //   while (ilength--) {
+    //     const item = items[ilength];
+    //     apidata.array.push(item);
+    //   }
+    // }
 
     // apidata.array = apidata.items.outfit;
     // console.log(apidata.array)
