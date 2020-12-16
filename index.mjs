@@ -326,7 +326,7 @@ class User {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
           }
-        })).text();
+        })).json();
         if(auth.error) return res.send(auth);
         const token = uuid.v4();
         accountsSessions[token] = {
