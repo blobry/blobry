@@ -213,6 +213,7 @@ class User {
       if(session.rawActors.find(e => e.ip === ip)) {
         session.rawActors.find(e => e.ip === ip).type = character;
         session.rawActors.find(e => e.ip === ip).textured = textured;
+        session.sendToAll(session.listeners);
         res.send('Set new data.');
         return;
       }
@@ -238,6 +239,7 @@ class User {
         session.listeners = session.listeners.filter((r) => r.ip !== ip);
         if(session.rawActors.find(e => e.ip === ip)) {
           session.rawActors = session.rawActors.filter(e => e.ip !== ip);
+          session.sendToAll(session.listeners);
         }
         return res.end();
       });
