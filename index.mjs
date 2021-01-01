@@ -17,6 +17,8 @@ import mongodb from 'mongodb';
 import word from 'number-words';
 import hexyjs from 'hexyjs';
 
+const { v4 } = uuid;
+
 const { Base64 } = jse;
 const { Octokit } = octo;
 const { MongoClient, ObjectId } = mongodb;
@@ -137,6 +139,118 @@ class User {
           collection: client.db('Fort').collection('Repl.it')
         }
     }
+
+    class Actor {
+      constructor(ip, writer, type, textured, id, name) {
+        this.ip = ip;
+        this.writer = writer;
+        this.type = type;
+        this.textured = textured;
+        this.id = id;
+        this.name = name;
+      }
+    }
+
+    class Session {
+      constructor() {
+        this.rawActors = [];
+        this.listeners = [];
+        this.writers = [];
+      }
+  
+      addActor(actor) {
+        this.rawActors.push(actor);
+        this.sendToAll(this.listeners);
+      }
+
+      sendToAll(listeners) {
+        let length = listeners.length;
+
+        while(length--) {
+          const listener = listeners[length];
+
+          listener.res.write(`data: ${JSON.stringify(this.actors)}\n\n`);
+        }
+      }
+      
+      get actors() {
+        const actors = [];
+        let length = this.rawActors.length;
+  
+        while(length--) {
+          const actor = this.rawActors[length];
+  
+          actors.push({
+            type: actor.type,
+            textured: actor.textured,
+            id: actor.id,
+            name: actor.name
+          });
+        }
+  
+        return actors;
+      }
+    }
+
+    const session = new Session();
+    const characters = [
+      'Ramirez',
+      'Wild Streak',
+      'Jonesy'
+    ];
+
+    app.post('/api/interactive', async (req, res) => {
+      const ip = req.ip;
+
+      const character = req.query.type;
+      const textured = req.query.textured;
+      const name = req.query.name;
+
+      if(!session.listeners.find(e => e.ip === ip)) return res.send('You\'re not listening!').status(403);
+      if(!character || !textured || !name) return res.send('You are missing the type/textured/name body property.').status(403);
+      if(!characters.includes(character)) return res.send('That character doesn\'t exist!').status(403);
+
+      if(session.rawActors.find(e => e.ip === ip)) {
+        session.rawActors.find(e => e.ip === ip).type = character;
+        session.rawActors.find(e => e.ip === ip).textured = textured;
+        res.send('Set new data.');
+        return;
+      }
+
+      if(session.actors.length > 5) return res.send('Max users reached!').status(403);
+
+      const actor = new Actor(ip, null, character, textured, v4(), name);
+      session.addActor(actor);
+
+      res.sendStatus(204);
+    });
+
+    app.get('/api/interactive', async (req, res) => {
+      const ip = req.ip;
+
+      res.setHeader('Cache-Control', 'no-cache');
+      res.setHeader('Connection', 'keep-alive');
+      res.setHeader('Content-Type', 'text/event-stream');
+      res.setHeader("Access-Control-Allow-Origin", "*");
+      res.flushHeaders();
+
+      res.once('close', async () => {
+        session.listeners = session.listeners.filter((r) => r.ip !== ip);
+        if(session.rawActors.find(e => e.ip === ip)) {
+          session.rawActors = session.rawActors.filter(e => e.ip !== ip);
+        }
+        return res.end();
+      });
+
+      res.write(`data: ${JSON.stringify(session.actors)}\n\n`);
+      session.listeners.push({
+        res,
+        ip
+      });
+      // setInterval(() => {
+      //   res.write(`data: ${JSON.stringify(session.actors)}\n\n`);
+      // }, 500);
+    });
 
     app.post('/api/repl/account', async (req, res) => {
         if(!accountsSessions[req.query.auth]) return throwError(res, 401);
