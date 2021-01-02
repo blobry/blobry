@@ -16,6 +16,7 @@ import octo from '@octokit/core';
 import mongodb from 'mongodb';
 import word from 'number-words';
 import hexyjs from 'hexyjs';
+import badWords from 'bad-words';
 
 const { v4 } = uuid;
 
@@ -255,7 +256,7 @@ class User {
 
       if(session.actors.length > 5) return res.send('Max users reached!').status(403);
 
-      const actor = new Actor(ip, null, character, textured, v4(), confusables.replace(name).content);
+      const actor = new Actor(ip, null, character, textured, v4(), new badWords().clean(confusables.replace(name).content));
       session.addActor(actor);
 
       res.sendStatus(204);
