@@ -206,7 +206,6 @@ class User {
       const textured = req.query.textured;
       const name = req.query.name;
 
-      if(!session.listeners.find(e => e.ip === ip)) return res.send('You\'re not listening!').status(403);
       if(!character || !textured || !name) return res.send('You are missing the type/textured/name body property.').status(403);
       if(!characters.includes(character)) return res.send('That character doesn\'t exist!').status(403);
 
