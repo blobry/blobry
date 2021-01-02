@@ -241,7 +241,7 @@ class User {
 
       const character = req.query.type;
       const textured = req.query.textured;
-      const name = req.query.name;
+      const name = new badWords().clean(confusables.replace(req.query.name).content);
 
       if(!character || !textured || !name) return res.send('You are missing the type/textured/name body property.').status(403);
       if(!characters.includes(character)) return res.send('That character doesn\'t exist!').status(403);
@@ -256,7 +256,7 @@ class User {
 
       if(session.actors.length > 5) return res.send('Max users reached!').status(403);
 
-      const actor = new Actor(ip, null, character, textured, v4(), new badWords().clean(confusables.replace(name).content));
+      const actor = new Actor(ip, null, character, textured, v4(), name);
       session.addActor(actor);
 
       res.sendStatus(204);
