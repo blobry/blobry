@@ -199,6 +199,42 @@ class User {
       'Jonesy'
     ];
 
+    class Confusables {
+      constructor(confusables, custom) {
+          this.confusables = {};
+          if(custom) confusables += `\n${custom}`;
+          for (const confusable of confusables.matchAll(/\( . → . \)/ug)) {
+              const conversion = confusable[0].replace(/\( /g, '').replace(/ \)/g, '').trim().split(' → ');
+              const unciode = conversion[0];
+              const original = conversion[1];
+              this.confusables[unciode] = original;
+          }
+          this.keys = Object.keys(this.confusables);
+      }
+    
+      replace(content) {
+          const keys = this.keys;
+          const found = [];
+          for (const key of keys) {
+              if(key === '|') continue;
+              const regex = new RegExp(key, 'g');
+              const value = this.confusables[key];
+              if(content !== content.replace(regex, value)) {
+                  content = content.replace(regex, value);
+                  found.push({
+                      [key]: value
+                  });
+              }
+          }
+          return {
+              found,
+              content
+          };
+      }
+    }
+
+    const confusables = new Confusables(await (await fetch('http://www.unicode.org/Public/security/latest/confusables.txt')).text());
+
     app.post('/api/interactive', async (req, res) => {
       const ip = req.ip;
 
@@ -219,7 +255,7 @@ class User {
 
       if(session.actors.length > 5) return res.send('Max users reached!').status(403);
 
-      const actor = new Actor(ip, null, character, textured, v4(), name);
+      const actor = new Actor(ip, null, character, textured, v4(), confusables.replace(name).content);
       session.addActor(actor);
 
       res.sendStatus(204);
