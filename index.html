@@ -12,72 +12,27 @@
  <!-- */ -->
  
  <!DOCTYPE html>
- <html style="overflow: hidden;">
-     <head>
-        <title>Blobry</title>
-        <link rel="stylesheet" href="./src/css/f4e17240.css">
-        <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
-        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30=" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/gh/swaydeng/imgcolr@1.0.1/imgcolr.html5.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/jquery.shadow-animation/1/mainfile"></script>
-        <script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
-        <script src="./src/js/7391cbd8.js" type="text/javascript"></script>
-        <link rel="icon" href="favicon.ico" type="image/ico"/>
-        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
-        <meta name="keywords" content="Tector,blobry,Tector,blobry.com">
-        <meta name="theme-color" content="#7289DA">
-        <meta name="description" content="The home of Tector's projects.">
-        <meta content="Blobry" property="og:site_name">
-        <meta property="og:url" content="https://blobry.com/">
-        <meta property="og:type" content="website">
-        <meta property="og:image" itemprop="image" content="https://blobry.herokuapp.com/static/computer.png">
-        <meta property="og:title" content="Home Page">
-        <meta property="og:description" content="The home of Tector's projects.">
-        <meta name="twitter:card" content="summary_large_image">
-        <meta name="twitter:title" content="Home Page">
-        <meta name="twitter:image" content="https://blobry.herokuapp.com/static/computer.png">
-        <meta name="twitter:description" content="The home of Tector's projects.">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-     </head>
-     <body>
-        <div class="colorchange">
-            <div id="color"></div>
-            <div id="redo">
-                REDO ANIMATION
-            </div>
-        </div>
-        <div class="section header">
-            <div>
-                <div id="rando" style="display: none;top: 100%;"></div>
-                <div style="position: relative;left: -4vh;">
-                    <svg id="blob" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="animation: 5s ease-in-out 0s infinite normal none running move;">
-                        <path fill="#7289DA" d="M44.6,-76.2C58.4,-69.2,70.7,-58.6,78.5,-45.3C86.3,-32,89.6,-16,89.2,-0.2C88.8,15.5,84.7,31,77.2,44.7C69.6,58.5,58.5,70.4,45.1,77.4C31.7,84.4,15.8,86.6,-0.4,87.3C-16.7,88,-33.3,87.3,-46.7,80.3C-60.1,73.2,-70.3,59.8,-77.3,45.4C-84.4,31,-88.3,15.5,-88.2,0C-88.2,-15.4,-84.1,-30.8,-76.7,-44.6C-69.3,-58.4,-58.5,-70.5,-45.1,-77.8C-31.8,-85.2,-15.9,-87.7,-0.3,-87.2C15.4,-86.8,30.7,-83.3,44.6,-76.2Z" transform="translate(100 100)"></path>
-                    </svg>
-                    <svg id="blob" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="animation: 5s ease-in-out 0s infinite normal none running move;">
-                        <path fill="#7289DA" d="M44.6,-76.2C58.4,-69.2,70.7,-58.6,78.5,-45.3C86.3,-32,89.6,-16,89.2,-0.2C88.8,15.5,84.7,31,77.2,44.7C69.6,58.5,58.5,70.4,45.1,77.4C31.7,84.4,15.8,86.6,-0.4,87.3C-16.7,88,-33.3,87.3,-46.7,80.3C-60.1,73.2,-70.3,59.8,-77.3,45.4C-84.4,31,-88.3,15.5,-88.2,0C-88.2,-15.4,-84.1,-30.8,-76.7,-44.6C-69.3,-58.4,-58.5,-70.5,-45.1,-77.8C-31.8,-85.2,-15.9,-87.7,-0.3,-87.2C15.4,-86.8,30.7,-83.3,44.6,-76.2Z" transform="translate(100 100)"></path>
-                    </svg>
-                    <svg id="blob" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="animation: 5s ease-in-out 0s infinite normal none running move;">
-                        <path fill="#7289DA" d="M44.6,-76.2C58.4,-69.2,70.7,-58.6,78.5,-45.3C86.3,-32,89.6,-16,89.2,-0.2C88.8,15.5,84.7,31,77.2,44.7C69.6,58.5,58.5,70.4,45.1,77.4C31.7,84.4,15.8,86.6,-0.4,87.3C-16.7,88,-33.3,87.3,-46.7,80.3C-60.1,73.2,-70.3,59.8,-77.3,45.4C-84.4,31,-88.3,15.5,-88.2,0C-88.2,-15.4,-84.1,-30.8,-76.7,-44.6C-69.3,-58.4,-58.5,-70.5,-45.1,-77.8C-31.8,-85.2,-15.9,-87.7,-0.3,-87.2C15.4,-86.8,30.7,-83.3,44.6,-76.2Z" transform="translate(100 100)"></path>
-                    </svg>
-                </div>
-            </div>
-        </div>
-        <div class="section section-projects">
-            <div>
-                <div>
-                    We aren't affiliated nor endorsed of these games or creators of these games.
-                </div>
-                Projects
-            </div>
-            <div class="projects">
-                <div onclick="window.location = 'https://fort.blobry.com/'">
-                    <svg enable-background="new 0 0 512 512" viewBox="0 0 512 512" fill="white" width="83px" height="auto"><g><g><g><path d="m.305 377.357h511.39v63.214h-511.39z" fill="#74abd8"></path><path d="m256 377.357h255.695v63.214h-255.695z" fill="#5881bf"></path></g><g><path d="m.305 185.772h511.39v63.214h-511.39z" fill="#74abd8"></path><path d="m256 185.772h255.695v63.214h-255.695z" fill="#5881bf"></path></g></g><g><g><g><path d="m112.317 511.552h-97.317c-8.284 0-15-6.716-15-15v-445.42c0-4.778 2.276-9.271 6.129-12.096l48.659-35.684c5.28-3.872 12.461-3.872 17.741 0l48.659 35.683c3.853 2.826 6.13 7.318 6.13 12.096v445.42c-.001 8.285-6.717 15.001-15.001 15.001z" fill="#7289DA"></path><path d="m121.187 39.035-48.658-35.683c-2.64-1.936-5.755-2.904-8.87-2.904v511.103h48.658c8.285 0 15-6.716 15-15v-445.419c0-4.779-2.276-9.271-6.13-12.097z" fill="#6175B7"></path></g><g><g><path d="m63.659 414.828c-6.285 0-11.982-4.065-14.115-9.953-2.126-5.868-.242-12.706 4.605-16.647 4.869-3.959 11.819-4.489 17.212-1.265 5.385 3.22 8.218 9.646 6.998 15.795-1.374 6.92-7.64 12.07-14.7 12.07z" fill="inherit"></path></g><g><path d="m63.659 231.827c-6.285 0-11.982-4.065-14.115-9.953-2.126-5.868-.243-12.706 4.605-16.647 4.869-3.959 11.819-4.49 17.212-1.265 5.385 3.22 8.218 9.646 6.998 15.795-1.374 6.921-7.64 12.07-14.7 12.07z" fill="inherit"></path></g></g></g><g><g><path d="m497 511.552h-97.317c-8.284 0-15-6.716-15-15v-445.42c0-4.778 2.276-9.271 6.13-12.096l48.659-35.683c5.28-3.872 12.461-3.872 17.741 0l48.659 35.683c3.853 2.826 6.129 7.318 6.129 12.096v445.42c-.001 8.284-6.717 15-15.001 15z" fill="#7289DA"></path><path d="m505.87 39.035-48.658-35.683c-2.64-1.936-5.755-2.904-8.871-2.904v511.103h48.659c8.284 0 15-6.716 15-15v-445.419c0-4.779-2.276-9.271-6.13-12.097z" fill="#6175B7"></path></g><g><g><path d="m448.341 414.828c-6.285 0-11.982-4.065-14.115-9.953-2.126-5.868-.242-12.706 4.605-16.647 4.869-3.959 11.82-4.489 17.212-1.265 5.385 3.22 8.218 9.646 6.998 15.795-1.373 6.92-7.639 12.07-14.7 12.07z" fill="inherit"></path></g><g><path d="m448.341 231.827c-6.285 0-11.982-4.065-14.115-9.953-2.126-5.868-.242-12.706 4.605-16.647 4.869-3.959 11.82-4.49 17.212-1.265 5.385 3.22 8.218 9.646 6.998 15.795-1.373 6.921-7.639 12.07-14.7 12.07z" fill="inherit"></path></g></g></g><g><g><path d="m304.659 511.552h-97.317c-8.284 0-15-6.716-15-15v-445.42c0-4.778 2.276-9.271 6.13-12.096l48.658-35.684c5.28-3.872 12.461-3.872 17.741 0l48.658 35.683c3.853 2.826 6.13 7.318 6.13 12.096v445.42c0 8.285-6.716 15.001-15 15.001z" fill="#7289DA"></path><path d="m313.529 39.035-48.658-35.683c-2.64-1.936-5.755-2.904-8.871-2.904v511.103h48.658c8.285 0 15-6.716 15-15v-445.419c0-4.779-2.276-9.271-6.129-12.097z" fill="#6175B7"></path></g><g><g><path d="m256 414.828c-6.285 0-11.982-4.065-14.115-9.953-2.126-5.868-.242-12.706 4.605-16.647 4.869-3.959 11.819-4.489 17.212-1.265 5.385 3.22 8.218 9.646 6.998 15.795-1.373 6.92-7.64 12.07-14.7 12.07z" fill="inherit"></path></g><g><path d="m256 231.827c-6.285 0-11.982-4.065-14.115-9.953-2.126-5.868-.242-12.706 4.605-16.647 4.869-3.959 11.819-4.49 17.212-1.265 5.385 3.22 8.218 9.646 6.998 15.795-1.373 6.921-7.64 12.07-14.7 12.07z" fill="inherit"></path></g></g></g></g></g></svg>
-                <div>
-                    Fortnite Lobby Bot
-                </div>
-            </div>
-            </div>
-        </div>
-     </body>
- </html>
+ <html style="
+ overflow: hidden;
+"><head>
+<title>Stressery</title><link rel="stylesheet" href="./src/css/f4e17240.css">
+</head>
+<body style="
+ overflow: hidden;
+">
+
+<div class="section header">
+<div>
+<div id="rando" style="top: 83%;">Blobry has shut-down for now.</div><div id="rando" style="top: 53%;color: #7289DA;font-size: 18px;position: absolute;top: 87%;left: -36px;text-align: center;width: 102%;">We've went under a wave of stress.</div>
+<div style="position: relative; left: -30px;">
+
+<svg id="blob" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="animation: 5s ease-in-out 0s infinite normal none running move; display: inline-block; width: 350px;">
+<path fill="#7289DA" d="M44.6,-76.2C58.4,-69.2,70.7,-58.6,78.5,-45.3C86.3,-32,89.6,-16,89.2,-0.2C88.8,15.5,84.7,31,77.2,44.7C69.6,58.5,58.5,70.4,45.1,77.4C31.7,84.4,15.8,86.6,-0.4,87.3C-16.7,88,-33.3,87.3,-46.7,80.3C-60.1,73.2,-70.3,59.8,-77.3,45.4C-84.4,31,-88.3,15.5,-88.2,0C-88.2,-15.4,-84.1,-30.8,-76.7,-44.6C-69.3,-58.4,-58.5,-70.5,-45.1,-77.8C-31.8,-85.2,-15.9,-87.7,-0.3,-87.2C15.4,-86.8,30.7,-83.3,44.6,-76.2Z" transform="translate(100 100)"></path>
+</svg>
+
+</div>
+</div>
+</div>
+
+
+</body></html>
